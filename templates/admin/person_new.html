@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+{% block title %}新增人物／機構{% endblock %}
+{% block page_title %}新增人物／機構{% endblock %}
+{% block topbar_actions %}<a href="/people" class="btn btn-gray">← 返回</a>{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:500px">
+  <h3>新增人物／機構</h3>
+  <form method="post">
+    <label>名稱</label>
+    <input type="text" name="name" placeholder="姓名或機構全稱">
+    <label>類別</label>
+    <select name="type">
+      <option value="individual">個人</option>
+      <option value="organization">機構／公司</option>
+      <option value="group">群體</option>
+    </select>
+    <label>角色／身份</label>
+    <input type="text" name="role" placeholder="例：外牆承辦商">
+    <label>代表律師</label>
+    <input type="text" name="represented_by" placeholder="例：許偉強資深大律師">
+    <button type="submit" class="btn btn-primary">建立</button>
+  </form>
+</div>
+{% endblock %}

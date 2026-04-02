@@ -1,0 +1,63 @@
+{% extends "public/base.html" %}
+{% set depth = "../" %}
+{% block title %}人物機構{% endblock %}
+{% block nav_people %}class="active"{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><a href="../index.html">首頁</a> › 人物機構</div>
+<div class="section-title">人物及機構</div>
+
+{% if all_people %}
+  {% set orgs = all_people | selectattr("type", "equalto", "organization") | list %}
+  {% set groups = all_people | selectattr("type", "equalto", "group") | list %}
+  {% set individuals = all_people | selectattr("type", "equalto", "individual") | list %}
+
+  {% if orgs %}
+  <div class="section-title" style="margin-top:8px">公司及機構</div>
+  {% for person in orgs %}
+  <a href="{{ person.id }}.html" style="display:block;text-decoration:none;color:inherit">
+    <div class="list-item">
+      <div>
+        <h2>{{ person.name }}</h2>
+        <div class="list-meta">{{ person.role }}{% if person.represented_by %} · 代表：{{ person.represented_by }}{% endif %}</div>
+      </div>
+      <div class="list-item-arrow">›</div>
+    </div>
+  </a>
+  {% endfor %}
+  {% endif %}
+
+  {% if individuals %}
+  <div class="section-title" style="margin-top:24px">個人</div>
+  {% for person in individuals %}
+  <a href="{{ person.id }}.html" style="display:block;text-decoration:none;color:inherit">
+    <div class="list-item">
+      <div>
+        <h2>{{ person.name }}</h2>
+        <div class="list-meta">{{ person.role }}{% if person.represented_by %} · 代表：{{ person.represented_by }}{% endif %}</div>
+      </div>
+      <div class="list-item-arrow">›</div>
+    </div>
+  </a>
+  {% endfor %}
+  {% endif %}
+
+  {% if groups %}
+  <div class="section-title" style="margin-top:24px">群體</div>
+  {% for person in groups %}
+  <a href="{{ person.id }}.html" style="display:block;text-decoration:none;color:inherit">
+    <div class="list-item">
+      <div>
+        <h2>{{ person.name }}</h2>
+        <div class="list-meta">{{ person.role }}{% if person.represented_by %} · 代表：{{ person.represented_by }}{% endif %}</div>
+      </div>
+      <div class="list-item-arrow">›</div>
+    </div>
+  </a>
+  {% endfor %}
+  {% endif %}
+
+{% else %}
+  <div class="empty-state">整理中，敬請期待。</div>
+{% endif %}
+{% endblock %}

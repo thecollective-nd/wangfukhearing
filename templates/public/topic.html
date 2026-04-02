@@ -1,0 +1,41 @@
+{% extends "public/base.html" %}
+{% set depth = "../" %}
+{% block title %}{{ topic.name }}{% endblock %}
+{% block nav_topics %}class="active"{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="../index.html">首頁</a> ›
+  <a href="index.html">議題追蹤</a> ›
+  {{ topic.name }}
+</div>
+
+<div class="article-header">
+  <div class="article-label">議題追蹤</div>
+  <h1 class="article-title">{{ topic.name }}</h1>
+</div>
+
+{% if topic.description %}
+<div class="article-body" style="margin-bottom:28px">
+  {{ topic.description | text_to_html | safe }}
+</div>
+{% endif %}
+
+{% if entries %}
+  <div class="section-title">按天記錄</div>
+  {% for entry in entries %}
+  <div class="topic-entry">
+    <div class="entry-day">
+      <a href="../days/{{ entry.day.id }}.html" style="color:inherit">
+        第{{ entry.day.day_number }}天 · {{ entry.day.date | date_format }}
+      </a>
+    </div>
+    <div class="entry-content">
+      {{ entry.content | text_to_html | safe }}
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">記錄整理中，敬請期待。</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% block title %}新增議題{% endblock %}
+{% block page_title %}新增議題{% endblock %}
+{% block topbar_actions %}<a href="/topics" class="btn btn-gray">← 返回</a>{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:500px">
+  <h3>新增議題</h3>
+  <form method="post">
+    <label>議題名稱</label>
+    <input type="text" name="name" placeholder="例：棚網採購、圍標疑雲...">
+    <button type="submit" class="btn btn-primary">建立</button>
+  </form>
+</div>
+{% endblock %}

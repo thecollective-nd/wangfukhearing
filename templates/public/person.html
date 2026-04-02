@@ -1,0 +1,71 @@
+{% extends "public/base.html" %}
+{% set depth = "../" %}
+{% block title %}{{ person.name }}{% endblock %}
+{% block nav_people %}class="active"{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="../index.html">首頁</a> ›
+  <a href="index.html">人物機構</a> ›
+  {{ person.name }}
+</div>
+
+<div class="article-header">
+  <div class="article-label">
+    {% if person.type == 'organization' %}公司／機構
+    {% elif person.type == 'group' %}群體
+    {% else %}人物{% endif %}
+  </div>
+  <h1 class="article-title">{{ person.name }}</h1>
+</div>
+
+<!-- 基本資料 -->
+<div class="person-meta">
+  <table>
+    {% if person.role %}
+    <tr>
+      <td>身份</td>
+      <td>{{ person.role }}</td>
+    </tr>
+    {% endif %}
+    {% if person.represented_by %}
+    <tr>
+      <td>代表律師</td>
+      <td>{{ person.represented_by }}</td>
+    </tr>
+    {% endif %}
+    {% if person_days %}
+    <tr>
+      <td>出席聽證</td>
+      <td>
+        {% for d in person_days %}
+          <a href="../days/{{ d.id }}.html">第{{ d.day_number }}天</a>{% if not loop.last %}、{% endif %}
+        {% endfor %}
+      </td>
+    </tr>
+    {% endif %}
+  </table>
+</div>
+
+<!-- 詳細介紹 -->
+{% if person.description %}
+<div class="article-body">
+  {{ person.description | text_to_html | safe }}
+</div>
+{% endif %}
+
+<!-- 相關議題 -->
+{% if person_topics %}
+<div class="related-section">
+  <h3>相關議題</h3>
+  <div class="related-grid">
+    {% for topic in person_topics %}
+    <a href="../topics/{{ topic.id }}.html" class="related-card" style="display:block;text-decoration:none">
+      <div class="rc-label">議題</div>
+      <div class="rc-name">{{ topic.name }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

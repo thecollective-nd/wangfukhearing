@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% block title %}網站設定{% endblock %}
+{% block page_title %}⚙️ 網站設定{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:600px">
+  <h3>基本設定</h3>
+  <form method="post">
+    <label>網站標題</label>
+    <input type="text" name="site_title" value="{{ settings.site_title }}">
+    <label>副標題</label>
+    <input type="text" name="site_subtitle" value="{{ settings.site_subtitle }}">
+    <label>網站簡介</label>
+    <textarea name="site_description" rows="3">{{ settings.site_description }}</textarea>
+    <label>GitHub Pages 網址（設定後方可一鍵發布）</label>
+    <input type="text" name="github_repo" value="{{ settings.github_repo }}" placeholder="例：https://username.github.io/repo-name">
+    <button type="submit" class="btn btn-primary">儲存設定</button>
+  </form>
+</div>
+{% endblock %}

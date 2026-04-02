@@ -1,0 +1,52 @@
+{% extends "public/base.html" %}
+{% set depth = "" %}
+{% block title %}{% endblock %}
+{% block nav_home %}class="active"{% endblock %}
+
+{% block content %}
+<div class="home-intro">
+  {{ settings.site_description }}
+</div>
+
+{% if all_topics %}
+<div style="margin-bottom:32px">
+  <div class="section-title">議題追蹤</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+    {% for topic in all_topics %}
+    <a href="topics/{{ topic.id }}.html" class="tag tag-red" style="font-size:14px;padding:6px 14px">{{ topic.name }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="section-title">最新聽證記錄</div>
+
+{% if recent_days %}
+  {% for day in recent_days %}
+  <a href="days/{{ day.id }}.html" style="display:block;text-decoration:none;color:inherit">
+    <div class="day-card">
+      <div class="day-label">第{{ day.day_number }}天聽證</div>
+      <div class="day-date">{{ day.date | date_format }}</div>
+      {% if day.summary %}
+        <div class="day-summary">{{ day.summary }}</div>
+      {% endif %}
+      {% if day.topic_ids %}
+      <div class="day-tags">
+        {% for tid in day.topic_ids %}
+          {% if tid in topics_map %}
+          <span class="tag">{{ topics_map[tid].name }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+
+  <div style="text-align:right;margin-top:8px">
+    <a href="days/index.html" style="font-size:14px;color:#888">查看全部聽證記錄 →</a>
+  </div>
+{% else %}
+  <div class="empty-state">聽證記錄整理中，敬請期待。</div>
+{% endif %}
+{% endblock %}

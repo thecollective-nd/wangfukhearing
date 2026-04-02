@@ -1,0 +1,92 @@
+{% extends "admin/base.html" %}
+{% block title %}儀表板{% endblock %}
+{% block page_title %}儀表板{% endblock %}
+{% block topbar_actions %}
+  <form method="post" action="/preview" style="display:inline">
+    <button class="btn btn-gray">🔄 生成預覽</button>
+  </form>
+  <form method="post" action="/publish" style="display:inline;margin-left:8px">
+    <button class="btn btn-green" onclick="return confirm('確認發布到 GitHub Pages？')">🚀 發布網站</button>
+  </form>
+{% endblock %}
+
+{% block content %}
+<div class="grid-2" style="margin-bottom:20px">
+  <div class="card" style="text-align:center">
+    <div style="font-size:36px;font-weight:700;color:#3b82f6">{{ published_days }}/{{ days|length }}</div>
+    <div style="color:#6b7280;margin-top:4px">已發布聽證日</div>
+    <a href="/days" class="btn btn-gray btn-sm" style="margin-top:12px">管理</a>
+  </div>
+  <div class="card" style="text-align:center">
+    <div style="font-size:36px;font-weight:700;color:#8b5cf6">{{ published_topics }}/{{ topics|length }}</div>
+    <div style="color:#6b7280;margin-top:4px">已發布議題</div>
+    <a href="/topics" class="btn btn-gray btn-sm" style="margin-top:12px">管理</a>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- 聽證日進度 -->
+  <div class="card">
+    <h3>📅 聽證日進度</h3>
+    <table>
+      <thead>
+        <tr><th>聽證日</th><th>日期</th><th>狀態</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for day in days %}
+        <tr>
+          <td>第{{ day.day_number }}天</td>
+          <td style="color:#6b7280;font-size:13px">{{ day.date }}</td>
+          <td>
+            {% if day.published %}
+              <span class="badge badge-green">已發布</span>
+            {% else %}
+              <span class="badge badge-gray">草稿</span>
+            {% endif %}
+          </td>
+          <td><a href="/days/{{ day.id }}/edit" class="btn btn-gray btn-sm">編輯</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="margin-top:14px">
+      <a href="/days/new" class="btn btn-primary btn-sm">＋ 新增聽證日</a>
+    </div>
+  </div>
+
+  <!-- 議題概覽 -->
+  <div class="card">
+    <h3>🏷️ 議題概覽</h3>
+    <table>
+      <thead>
+        <tr><th>議題</th><th>記錄</th><th>狀態</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for topic in topics %}
+        <tr>
+          <td style="font-weight:600">{{ topic.name }}</td>
+          <td style="color:#6b7280;font-size:13px">{{ topic.entries|length }} 天</td>
+          <td>
+            {% if topic.published %}
+              <span class="badge badge-green">已發布</span>
+            {% else %}
+              <span class="badge badge-gray">草稿</span>
+            {% endif %}
+          </td>
+          <td><a href="/topics/{{ topic.id }}/edit" class="btn btn-gray btn-sm">編輯</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="margin-top:14px">
+      <a href="/topics/new" class="btn btn-primary btn-sm">＋ 新增議題</a>
+    </div>
+  </div>
+</div>
+
+{% if settings.last_published %}
+<p style="text-align:right;font-size:12px;color:#9ca3af;margin-top:8px">
+  最後發布：{{ settings.last_published }}
+</p>
+{% endif %}
+{% endblock %}

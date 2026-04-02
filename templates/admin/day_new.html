@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% block title %}新增聽證日{% endblock %}
+{% block page_title %}新增聽證日{% endblock %}
+{% block topbar_actions %}<a href="/days" class="btn btn-gray">← 返回</a>{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:500px">
+  <h3>新增聽證日</h3>
+  <form method="post">
+    <label>聽證日（第幾天）</label>
+    <input type="text" name="day_number" placeholder="例：8">
+    <label>日期</label>
+    <input type="date" name="date">
+    <button type="submit" class="btn btn-primary">建立</button>
+  </form>
+</div>
+{% endblock %}

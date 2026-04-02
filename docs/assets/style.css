@@ -1,0 +1,380 @@
+/* ── 重置 ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── 基礎 ── */
+:root {
+  --red:    #c0392b;
+  --dark:   #1a1a1a;
+  --mid:    #555;
+  --light:  #888;
+  --border: #e5e5e5;
+  --bg:     #f9f9f9;
+  --white:  #fff;
+  --max-w:  860px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, 'PingFang TC', 'Noto Serif TC', 'Source Han Serif TC',
+               'Times New Roman', serif;
+  color: var(--dark);
+  background: var(--bg);
+  line-height: 1.8;
+}
+
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── 頂部橫幅 ── */
+.site-header {
+  background: var(--white);
+  border-bottom: 3px solid var(--red);
+}
+.site-header-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 20px 20px 16px;
+}
+.site-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: 0.02em;
+}
+.site-subtitle {
+  font-size: 13px;
+  color: var(--light);
+  margin-top: 3px;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+}
+
+/* ── 導航欄 ── */
+.site-nav {
+  background: var(--dark);
+}
+.site-nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 0;
+}
+.site-nav a {
+  display: inline-block;
+  padding: 11px 16px;
+  color: #ccc;
+  font-size: 14px;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  transition: color 0.15s;
+}
+.site-nav a:hover,
+.site-nav a.active { color: #fff; text-decoration: none; }
+.site-nav a.active { border-bottom: 2px solid var(--red); }
+
+/* ── 主體版型 ── */
+.page-wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 36px 20px 60px;
+}
+
+/* ── 首頁 ── */
+.home-intro {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--red);
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  font-size: 15px;
+  line-height: 1.9;
+}
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--red);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+
+/* ── 聽證日卡片 ── */
+.day-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  transition: border-color 0.15s;
+}
+.day-card:hover { border-color: #bbb; }
+.day-card .day-label {
+  font-size: 12px;
+  color: var(--white);
+  background: var(--red);
+  padding: 2px 8px;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+}
+.day-card .day-date {
+  font-size: 13px;
+  color: var(--light);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  margin-bottom: 6px;
+}
+.day-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.day-card .day-summary {
+  font-size: 14px;
+  color: var(--mid);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.day-card .day-tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ── 議題標籤 ── */
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--mid);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  transition: all 0.15s;
+}
+.tag:hover { background: var(--dark); color: #fff; border-color: var(--dark); text-decoration: none; }
+.tag-red { border-color: var(--red); color: var(--red); }
+.tag-red:hover { background: var(--red); color: #fff; }
+
+/* ── 文章頁面 ── */
+.article-header {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.article-label {
+  font-size: 12px;
+  color: var(--red);
+  font-weight: 700;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.article-title {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.article-meta {
+  font-size: 13px;
+  color: var(--light);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+}
+
+.article-body p { margin-bottom: 16px; font-size: 15px; }
+.article-body p:last-child { margin-bottom: 0; }
+
+/* ── 重點列表 ── */
+.key-points {
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--red);
+  padding: 18px 22px;
+  margin: 24px 0;
+}
+.key-points h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.05em;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  margin-bottom: 12px;
+}
+.key-points ul { list-style: none; }
+.key-points ul li {
+  font-size: 15px;
+  padding: 6px 0 6px 16px;
+  position: relative;
+  border-bottom: 1px solid #eee;
+  line-height: 1.7;
+}
+.key-points ul li:last-child { border-bottom: none; }
+.key-points ul li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--red);
+  font-size: 12px;
+  top: 9px;
+}
+
+/* ── 新聞來源框 ── */
+.news-box {
+  margin-top: 28px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.news-box h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--light);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+.news-link {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+.news-link:last-child { border-bottom: none; }
+.news-link .news-source {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  color: var(--white);
+  background: var(--light);
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+.news-link a { color: var(--dark); }
+.news-link a:hover { color: var(--red); }
+
+/* ── 關聯區塊 ── */
+.related-section { margin-top: 32px; }
+.related-section h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--light);
+  letter-spacing: 0.05em;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  margin-bottom: 12px;
+}
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.related-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  font-size: 14px;
+  transition: border-color 0.15s;
+}
+.related-card:hover { border-color: var(--red); text-decoration: none; }
+.related-card .rc-label {
+  font-size: 11px;
+  color: var(--light);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  margin-bottom: 4px;
+}
+.related-card .rc-name { font-weight: 600; color: var(--dark); }
+
+/* ── 議題列表 ── */
+.topic-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  margin-bottom: 14px;
+  transition: border-color 0.15s;
+}
+.topic-card:hover { border-color: var(--red); }
+.topic-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.topic-card .topic-desc { font-size: 14px; color: var(--mid); }
+.topic-card .topic-days { font-size: 12px; color: var(--light); margin-top: 8px; font-family: -apple-system, 'PingFang TC', sans-serif; }
+
+/* ── 議題各天條目 ── */
+.topic-entry {
+  border-left: 3px solid var(--border);
+  padding: 14px 0 14px 20px;
+  margin-bottom: 20px;
+}
+.topic-entry .entry-day {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--red);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.topic-entry .entry-content { font-size: 15px; line-height: 1.8; }
+.topic-entry .entry-content p { margin-bottom: 12px; }
+
+/* ── 人物頁 ── */
+.person-meta {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+.person-meta table { width: 100%; }
+.person-meta td { padding: 6px 0; font-size: 14px; vertical-align: top; }
+.person-meta td:first-child {
+  width: 100px;
+  color: var(--light);
+  font-size: 13px;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+}
+
+/* ── 列表頁 ── */
+.list-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.15s;
+}
+.list-item:hover { border-color: var(--red); }
+.list-item h2 { font-size: 16px; font-weight: 700; }
+.list-item .list-meta { font-size: 13px; color: var(--light); font-family: -apple-system, 'PingFang TC', sans-serif; }
+.list-item-arrow { color: var(--border); font-size: 18px; }
+
+/* ── 分隔麵包屑 ── */
+.breadcrumb {
+  font-size: 13px;
+  color: var(--light);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+  margin-bottom: 20px;
+}
+.breadcrumb a { color: var(--light); }
+.breadcrumb a:hover { color: var(--red); }
+
+/* ── 頁腳 ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  padding: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--light);
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+}
+
+/* ── 空狀態 ── */
+.empty-state {
+  text-align: center;
+  color: var(--light);
+  padding: 60px 20px;
+  font-size: 15px;
+  font-family: -apple-system, 'PingFang TC', sans-serif;
+}
+
+/* ── 響應式 ── */
+@media (max-width: 640px) {
+  .article-title { font-size: 20px; }
+  .site-nav a { padding: 10px 10px; font-size: 13px; }
+}

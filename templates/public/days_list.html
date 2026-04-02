@@ -1,0 +1,34 @@
+{% extends "public/base.html" %}
+{% set depth = "../" %}
+{% block title %}聽證日誌{% endblock %}
+{% block nav_days %}class="active"{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><a href="../index.html">首頁</a> › 聽證日誌</div>
+<div class="section-title">聽證日誌</div>
+
+{% if sorted_days %}
+  {% for day in sorted_days %}
+  <a href="{{ day.id }}.html" style="display:block;text-decoration:none;color:inherit">
+    <div class="day-card">
+      <div class="day-label">第{{ day.day_number }}天聽證</div>
+      <div class="day-date">{{ day.date | date_format }}</div>
+      {% if day.summary %}
+        <div class="day-summary">{{ day.summary }}</div>
+      {% endif %}
+      {% if day.topic_ids %}
+      <div class="day-tags">
+        {% for tid in day.topic_ids %}
+          {% if tid in topics_map %}
+          <span class="tag">{{ topics_map[tid].name }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">聽證記錄整理中，敬請期待。</div>
+{% endif %}
+{% endblock %}

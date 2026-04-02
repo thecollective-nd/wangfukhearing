@@ -1,0 +1,27 @@
+{% extends "public/base.html" %}
+{% set depth = "../" %}
+{% block title %}議題追蹤{% endblock %}
+{% block nav_topics %}class="active"{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><a href="../index.html">首頁</a> › 議題追蹤</div>
+<div class="section-title">議題追蹤</div>
+
+{% if all_topics %}
+  {% for topic in all_topics %}
+  <a href="{{ topic.id }}.html" style="display:block;text-decoration:none;color:inherit">
+    <div class="topic-card">
+      <h2>{{ topic.name }}</h2>
+      {% if topic.description %}
+        <div class="topic-desc">{{ topic.description }}</div>
+      {% endif %}
+      <div class="topic-days">
+        {{ topic.entries | length }} 天記錄
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">議題整理中，敬請期待。</div>
+{% endif %}
+{% endblock %}

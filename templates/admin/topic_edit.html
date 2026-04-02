@@ -1,0 +1,80 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ topic.name }}{% endblock %}
+{% block page_title %}🏷️ 議題：{{ topic.name }}{% endblock %}
+{% block topbar_actions %}<a href="/topics" class="btn btn-gray">← 返回列表</a>{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+  <!-- 左：議題基本資料 -->
+  <div>
+    <div class="card">
+      <h3>議題資料</h3>
+      <form method="post">
+        <label>議題名稱</label>
+        <input type="text" name="name" value="{{ topic.name }}">
+
+        <label>議題簡介</label>
+        <p class="hint">簡短說明這個議題的背景，方便讀者理解</p>
+        <textarea name="description" rows="5" placeholder="例：聽證會調查宏福苑外牆棚網的採購過程，包括招標程序、合約細節及相關決策...">{{ topic.description }}</textarea>
+
+        <div class="publish-toggle">
+          <input type="checkbox" name="published" id="published" {% if topic.published %}checked{% endif %}>
+          <label for="published">標記為已發布</label>
+        </div>
+        <button type="submit" class="btn btn-primary">儲存</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 右：各天記錄 -->
+  <div>
+    <div class="card">
+      <h3>按天記錄</h3>
+      <p class="hint" style="margin-bottom:14px">為每個有相關內容的聽證日加入記錄</p>
+
+      {% if topic.entries %}
+        {% for entry in topic.entries %}
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:14px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <strong style="font-size:14px">
+              {% for day in days %}{% if day.id == entry.day_id %}第{{ day.day_number }}天（{{ day.date }}）{% endif %}{% endfor %}
+            </strong>
+            <form method="post" action="/topics/{{ topic.id }}/entries/delete/{{ entry.day_id }}">
+              <button class="btn btn-red btn-sm" onclick="return confirm('確認刪除？')">刪除</button>
+            </form>
+          </div>
+          <form method="post" action="/topics/{{ topic.id }}/entries/add">
+            <input type="hidden" name="day_id" value="{{ entry.day_id }}">
+            <textarea name="content" rows="4" style="margin-bottom:8px">{{ entry.content }}</textarea>
+            <button type="submit" class="btn btn-gray btn-sm">更新</button>
+          </form>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p style="color:#9ca3af;font-size:13px;margin-bottom:14px">尚未加入任何記錄</p>
+      {% endif %}
+
+      <!-- 新增某天記錄 -->
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9">
+        <p style="font-size:13px;font-weight:600;margin-bottom:10px">加入某天的記錄</p>
+        <form method="post" action="/topics/{{ topic.id }}/entries/add">
+          <label>選擇聽證日</label>
+          <select name="day_id" style="margin-bottom:10px">
+            <option value="">請選擇...</option>
+            {% for day in days %}
+            <option value="{{ day.id }}">第{{ day.day_number }}天（{{ day.date }}）</option>
+            {% endfor %}
+          </select>
+          <label>內容</label>
+          <textarea name="content" rows="5" placeholder="描述這個議題在當天聽證中的相關發展、問答或披露..."></textarea>
+          <button type="submit" class="btn btn-primary btn-sm">加入記錄</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if topic.updated_at %}
+  <p style="font-size:12px;color:#9ca3af;text-align:right">最後儲存：{{ topic.updated_at }}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "public/base.html" %}
+{% set depth = "../" %}
+{% block title %}第{{ day.day_number }}天聽證{% endblock %}
+{% block nav_days %}class="active"{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="../index.html">首頁</a> ›
+  <a href="index.html">聽證日誌</a> ›
+  第{{ day.day_number }}天
+</div>
+
+<div class="article-header">
+  <div class="article-label">第{{ day.day_number }}天聽證</div>
+  <h1 class="article-title">{{ day.date | date_format }} 聽證記錄</h1>
+  {% if day.updated_at %}
+    <div class="article-meta">整理於 {{ day.updated_at }}</div>
+  {% endif %}
+</div>
+
+{% if day.summary %}
+<div class="article-body">
+  {{ day.summary | text_to_html | safe }}
+</div>
+{% endif %}
+
+{% if day.key_points %}
+<div class="key-points">
+  <h3>重點摘錄</h3>
+  <ul>
+    {% for point in day.key_points %}
+    <li>{{ point }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<!-- 新聞來源 -->
+{% if day.news %}
+<div class="news-box">
+  <h3>相關報道</h3>
+  {% for item in day.news %}
+  <div class="news-link">
+    {% if item.source %}<span class="news-source">{{ item.source }}</span>{% endif %}
+    <a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.title or item.url }}</a>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- 關聯議題 -->
+{% if day_topics %}
+<div class="related-section">
+  <h3>相關議題</h3>
+  <div class="related-grid">
+    {% for topic in day_topics %}
+    <a href="../topics/{{ topic.id }}.html" class="related-card" style="display:block;text-decoration:none">
+      <div class="rc-label">議題</div>
+      <div class="rc-name">{{ topic.name }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- 關聯人物 -->
+{% if day_people %}
+<div class="related-section">
+  <h3>涉及人物／機構</h3>
+  <div class="related-grid">
+    {% for person in day_people %}
+    <a href="../people/{{ person.id }}.html" class="related-card" style="display:block;text-decoration:none">
+      <div class="rc-label">
+        {% if person.type == 'organization' %}機構
+        {% elif person.type == 'group' %}群體
+        {% else %}人物{% endif %}
+      </div>
+      <div class="rc-name">{{ person.name }}</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- 前後導航 -->
+<div style="display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #e5e5e5;font-size:14px">
+  {% set prev_day = none %}
+  {% set next_day = none %}
+  {% for d in all_days %}
+    {% if d.day_number == day.day_number - 1 %}{% set prev_day = d %}{% endif %}
+    {% if d.day_number == day.day_number + 1 %}{% set next_day = d %}{% endif %}
+  {% endfor %}
+  <div>
+    {% if prev_day %}<a href="{{ prev_day.id }}.html">← 第{{ prev_day.day_number }}天</a>{% endif %}
+  </div>
+  <div>
+    {% if next_day %}<a href="{{ next_day.id }}.html">第{{ next_day.day_number }}天 →</a>{% endif %}
+  </div>
+</div>
+{% endblock %}

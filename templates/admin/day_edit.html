@@ -1,0 +1,115 @@
+{% extends "admin/base.html" %}
+{% block title %}第{{ day.day_number }}天{% endblock %}
+{% block page_title %}📅 第{{ day.day_number }}天（{{ day.date }}）{% endblock %}
+{% block topbar_actions %}
+  <a href="/days" class="btn btn-gray">← 返回列表</a>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+  <div class="grid-2">
+    <!-- 左欄：主要內容 -->
+    <div>
+      <div class="card">
+        <h3>聽證摘要</h3>
+        <label>當天概述</label>
+        <textarea name="summary" rows="6" placeholder="簡述當天聽證的主要內容及重點...">{{ day.summary }}</textarea>
+
+        <label>重點摘錄</label>
+        <p class="hint">每行一項，將以列表方式顯示於網站</p>
+        <textarea name="key_points" rows="8" placeholder="重要陳述或問答&#10;每行輸入一項...">{{ day.key_points | join('\n') }}</textarea>
+      </div>
+
+      <!-- 發布設定 -->
+      <div class="card">
+        <h3>發布設定</h3>
+        <div class="publish-toggle">
+          <input type="checkbox" name="published" id="published" {% if day.published %}checked{% endif %}>
+          <label for="published">標記為已發布（勾選後方會顯示於公眾網站）</label>
+        </div>
+        <button type="submit" class="btn btn-primary">儲存</button>
+      </div>
+    </div>
+
+    <!-- 右欄：關聯及新聞 -->
+    <div>
+      <!-- 新聞連結 -->
+      <div class="card">
+        <h3>新聞連結</h3>
+        {% if day.news %}
+          {% for idx, item in day.news | enumerate %}
+          <div class="news-item">
+            <div>
+              <div class="news-title">
+                <a href="{{ item.url }}" target="_blank">{{ item.title or item.url }}</a>
+              </div>
+              <div class="news-meta">{{ item.source }}{% if item.date %} · {{ item.date }}{% endif %}</div>
+            </div>
+            <form method="post" action="/days/{{ day.id }}/news/delete/{{ idx }}">
+              <button class="btn btn-red btn-sm" onclick="return confirm('確認刪除？')">刪除</button>
+            </form>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="color:#9ca3af;font-size:13px">尚未加入任何新聞連結</p>
+        {% endif %}
+
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9">
+          <p style="font-size:13px;font-weight:600;margin-bottom:10px">加入新聞連結</p>
+          <form method="post" action="/days/{{ day.id }}/news/add">
+            <label>連結網址 *</label>
+            <input type="url" name="url" placeholder="https://...">
+            <label>標題</label>
+            <input type="text" name="title" placeholder="新聞標題（不填則顯示網址）">
+            <div class="grid-2">
+              <div>
+                <label>來源媒體</label>
+                <input type="text" name="source" placeholder="明報、蘋果、RTHK...">
+              </div>
+              <div>
+                <label>發布日期</label>
+                <input type="date" name="date">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">加入</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 關聯議題 -->
+      <div class="card">
+        <h3>關聯議題</h3>
+        <p class="hint" style="margin-bottom:10px">選擇本天涉及的議題</p>
+        <div class="checkbox-group">
+          {% for topic in topics %}
+          <label>
+            <input type="checkbox" name="topic_ids" value="{{ topic.id }}"
+              {% if topic.id in day.topic_ids %}checked{% endif %}>
+            {{ topic.name }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 關聯人物 -->
+      <div class="card">
+        <h3>關聯人物／機構</h3>
+        <p class="hint" style="margin-bottom:10px">選擇本天出現的相關方</p>
+        <div class="checkbox-group">
+          {% for person in people %}
+          <label>
+            <input type="checkbox" name="people_ids" value="{{ person.id }}"
+              {% if person.id in day.people_ids %}checked{% endif %}>
+            {{ person.name }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if day.updated_at %}
+    <p style="font-size:12px;color:#9ca3af;text-align:right">最後儲存：{{ day.updated_at }}</p>
+  {% endif %}
+</form>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ person.name }}{% endblock %}
+{% block page_title %}👤 {{ person.name }}{% endblock %}
+{% block topbar_actions %}<a href="/people" class="btn btn-gray">← 返回列表</a>{% endblock %}
+
+{% block content %}
+<form method="post">
+<div class="grid-2">
+  <!-- 左：基本資料 -->
+  <div>
+    <div class="card">
+      <h3>基本資料</h3>
+      <label>名稱</label>
+      <input type="text" name="name" value="{{ person.name }}">
+
+      <label>類別</label>
+      <select name="type">
+        <option value="individual" {% if person.type == 'individual' %}selected{% endif %}>個人</option>
+        <option value="organization" {% if person.type == 'organization' %}selected{% endif %}>機構／公司</option>
+        <option value="group" {% if person.type == 'group' %}selected{% endif %}>群體</option>
+      </select>
+
+      <label>角色／身份</label>
+      <input type="text" name="role" value="{{ person.role }}" placeholder="例：外牆承辦商、物業管理公司...">
+
+      <label>代表律師</label>
+      <input type="text" name="represented_by" value="{{ person.represented_by }}" placeholder="例：許偉強資深大律師">
+
+      <label>詳細介紹</label>
+      <p class="hint">介紹這個人物／機構在事件中的角色及背景（段落之間空一行）</p>
+      <textarea name="description" rows="8" placeholder="詳細說明...">{{ person.description }}</textarea>
+
+      <div class="publish-toggle">
+        <input type="checkbox" name="published" id="published" {% if person.published %}checked{% endif %}>
+        <label for="published">標記為已發布</label>
+      </div>
+      <button type="submit" class="btn btn-primary">儲存</button>
+    </div>
+  </div>
+
+  <!-- 右：關聯 -->
+  <div>
+    <div class="card">
+      <h3>出現的聽證日</h3>
+      <div class="checkbox-group">
+        {% for day in days %}
+        <label>
+          <input type="checkbox" name="day_ids" value="{{ day.id }}"
+            {% if day.id in person.day_ids %}checked{% endif %}>
+          第{{ day.day_number }}天（{{ day.date }}）
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>相關議題</h3>
+      <div class="checkbox-group">
+        {% for topic in topics %}
+        <label>
+          <input type="checkbox" name="topic_ids" value="{{ topic.id }}"
+            {% if topic.id in person.topic_ids %}checked{% endif %}>
+          {{ topic.name }}
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if person.updated_at %}
+  <p style="font-size:12px;color:#9ca3af;text-align:right">最後儲存：{{ person.updated_at }}</p>
+{% endif %}
+</form>
+{% endblock %}

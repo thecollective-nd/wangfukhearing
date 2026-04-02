@@ -1,0 +1,95 @@
+{
+  "days": [
+    {
+      "id": "day1",
+      "day_number": 1,
+      "date": "2026-03-19",
+      "title": "第一天",
+      "summary": "",
+      "key_points": [],
+      "news": [],
+      "topic_ids": [],
+      "people_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "day2",
+      "day_number": 2,
+      "date": "2026-03-20",
+      "title": "第二天",
+      "summary": "",
+      "key_points": [],
+      "news": [],
+      "topic_ids": [],
+      "people_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "day3",
+      "day_number": 3,
+      "date": "2026-03-24",
+      "title": "第三天",
+      "summary": "",
+      "key_points": [],
+      "news": [],
+      "topic_ids": [],
+      "people_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "day4",
+      "day_number": 4,
+      "date": "2026-03-26",
+      "title": "第四天",
+      "summary": "",
+      "key_points": [],
+      "news": [],
+      "topic_ids": [],
+      "people_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "day5",
+      "day_number": 5,
+      "date": "2026-03-30",
+      "title": "第五天",
+      "summary": "",
+      "key_points": [],
+      "news": [],
+      "topic_ids": [],
+      "people_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "day6",
+      "day_number": 6,
+      "date": "2026-03-31",
+      "title": "第六天",
+      "summary": "",
+      "key_points": [],
+      "news": [],
+      "topic_ids": [],
+      "people_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "day7",
+      "day_number": 7,
+      "date": "2026-04-01",
+      "title": "第七天",
+      "summary": "",
+      "key_points": [],
+      "news": [],
+      "topic_ids": [],
+      "people_ids": [],
+      "published": false,
+      "updated_at": ""
+    }
+  ]
+}

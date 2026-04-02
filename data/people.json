@@ -1,0 +1,124 @@
+{
+  "people": [
+    {
+      "id": "person-1",
+      "name": "置邦興業有限公司",
+      "type": "organization",
+      "role": "涉事公司",
+      "description": "",
+      "represented_by": "許偉強資深大律師、何卓衡大律師、楊志聰大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-2",
+      "name": "宏福苑業主立案法團（第十二屆管理委員會）",
+      "type": "organization",
+      "role": "業主立案法團",
+      "description": "",
+      "represented_by": "李律仁資深大律師、柯愷欣大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-3",
+      "name": "市區重建局",
+      "type": "organization",
+      "role": "政府機構",
+      "description": "",
+      "represented_by": "呂世杰資深大律師、阮文躍大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-4",
+      "name": "合安管理有限公司",
+      "type": "organization",
+      "role": "管理公司",
+      "description": "",
+      "represented_by": "文國灝大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-5",
+      "name": "宏泰消防工程有限公司",
+      "type": "organization",
+      "role": "消防工程承辦商",
+      "description": "",
+      "represented_by": "林樂夫大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-6",
+      "name": "梁秉基",
+      "type": "individual",
+      "role": "",
+      "description": "",
+      "represented_by": "陳熾龍大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-7",
+      "name": "黃俠然",
+      "type": "individual",
+      "role": "",
+      "description": "",
+      "represented_by": "鐘浩怡律師、何光偉律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-8",
+      "name": "競爭事務委員會",
+      "type": "organization",
+      "role": "政府機構",
+      "description": "",
+      "represented_by": "李曉亮先生",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-9",
+      "name": "宏福苑居民",
+      "type": "group",
+      "role": "受災居民",
+      "description": "",
+      "represented_by": "譚俊傑大律師、李峰琦大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    },
+    {
+      "id": "person-10",
+      "name": "政府",
+      "type": "organization",
+      "role": "政府",
+      "description": "",
+      "represented_by": "孫靖乾資深大律師、卓元暢大律師、劉逸冲大律師",
+      "day_ids": [],
+      "topic_ids": [],
+      "published": false,
+      "updated_at": ""
+    }
+  ]
+}
