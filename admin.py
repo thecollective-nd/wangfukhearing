@@ -406,7 +406,10 @@ def search():
 @app.route('/publish', methods=['POST'])
 def publish():
     try:
-        # 執行 build.py 生成靜態網站
+        settings = get_settings()
+        coming_soon = settings.get('coming_soon', True)
+
+        # 執行 build.py 生成靜態網站（本地）
         result = subprocess.run(
             ['python3', os.path.join(BASE_DIR, 'build.py')],
             capture_output=True, text=True, cwd=BASE_DIR
@@ -415,25 +418,44 @@ def publish():
             flash(f'網站生成失敗：{result.stderr}', 'error')
             return redirect(url_for('dashboard'))
 
+        # 若處於「整理中」模式，推送時以佔位頁面取代首頁
+        real_index = os.path.join(BASE_DIR, 'docs', 'index.html')
+        backup_index = os.path.join(BASE_DIR, 'docs', '_real_index.html')
+        coming_soon_html = os.path.join(BASE_DIR, 'docs', '_coming_soon.html')
+
+        if coming_soon and os.path.exists(coming_soon_html):
+            import shutil
+            shutil.copy(real_index, backup_index)      # 備份真實首頁
+            shutil.copy(coming_soon_html, real_index)  # 用佔位頁面替換
+
         # Git 操作
         git_cmds = [
             ['git', 'add', 'docs/', 'data/'],
             ['git', 'commit', '-m', f'更新：{now_str()}'],
             ['git', 'push']
         ]
+        push_failed = False
         for cmd in git_cmds:
             r = subprocess.run(cmd, capture_output=True, text=True, cwd=BASE_DIR)
-            if r.returncode != 0 and 'nothing to commit' not in r.stdout:
-                if 'push' in cmd:
-                    flash(f'網站已生成，但推送失敗（請確認 GitHub 設定）：{r.stderr}', 'warning')
-                    return redirect(url_for('dashboard'))
+            if r.returncode != 0 and 'nothing to commit' not in r.stdout and 'nothing to commit' not in r.stderr:
+                if cmd[1] == 'push':
+                    push_failed = True
+                    flash(f'已生成，但推送失敗（請確認 GitHub 設定）：{r.stderr}', 'warning')
 
-        # 更新最後發布時間
-        settings = get_settings()
-        settings['last_published'] = now_str()
-        save_json('settings.json', settings)
+        # 推送完成後還原真實首頁（本地保留完整預覽）
+        if coming_soon and os.path.exists(backup_index):
+            import shutil
+            shutil.copy(backup_index, real_index)
+            os.remove(backup_index)
 
-        flash('網站已成功發布！', 'success')
+        if not push_failed:
+            settings['last_published'] = now_str()
+            save_json('settings.json', settings)
+            if coming_soon:
+                flash('已推送至 GitHub（外界目前看到「整理中」頁面，本地預覽正常）', 'success')
+            else:
+                flash('網站已成功正式發布！', 'success')
+
     except Exception as e:
         flash(f'發布時出錯：{str(e)}', 'error')
 
@@ -467,6 +489,7 @@ def settings_page():
         settings['site_subtitle'] = request.form.get('site_subtitle', '').strip()
         settings['site_description'] = request.form.get('site_description', '').strip()
         settings['github_repo'] = request.form.get('github_repo', '').strip()
+        settings['coming_soon'] = request.form.get('coming_soon', 'true') == 'true'
         save_json('settings.json', settings)
         flash('設定已儲存', 'success')
         return redirect(url_for('settings_page'))
