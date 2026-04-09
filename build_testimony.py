@@ -18,7 +18,7 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
-OUTPUT_DIR = os.path.join(BASE_DIR, 'docs-testimony')
+OUTPUT_DIR = os.path.join(BASE_DIR, 'docs', 'testimony')
 
 
 def load_json(filename):

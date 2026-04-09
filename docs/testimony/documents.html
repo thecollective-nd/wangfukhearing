@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件資料庫 — 宏福苑獨立委員會聽證會</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif;
+      font-size: 15px;
+      color: #1a1a1a;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    /* ── 頂部欄 ── */
+    header {
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      text-decoration: none;
+    }
+    .site-name span { color: #64748b; font-weight: 400; margin-left: 8px; font-size: 12px; }
+    .header-tag {
+      background: #1e3a5f;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── 整體佈局 ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── 側欄 ── */
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e2e8f0;
+      padding: 24px 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+    }
+    .sidebar-section {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 18px;
+      margin: 18px 0 6px;
+    }
+    .sidebar-section:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 18px;
+      font-size: 14px;
+      color: #374151;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+    }
+    .nav-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      text-decoration: none;
+    }
+    .nav-item.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-left-color: #2563eb;
+      font-weight: 600;
+    }
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    /* ── 主內容 ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px 36px;
+    }
+
+    /* 卡片 */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    /* 徽章 */
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin: 2px 3px 2px 0;
+    }
+    .tag-day { background: #f0fdf4; color: #15803d; }
+
+    /* 口供正文 */
+    .testimony-body p {
+      line-height: 1.9;
+      margin-bottom: 1em;
+      color: #374151;
+    }
+    .testimony-body p:last-child { margin-bottom: 0; }
+
+    /* 連結 */
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* 預覽標示 */
+    .preview-banner {
+      background: #fef9c3;
+      border-bottom: 2px solid #eab308;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #854d0e;
+    }
+
+    /* 手機：側欄收起 */
+    @media (max-width: 680px) {
+      .sidebar { display: none; }
+      .main { padding: 20px 16px; }
+    }
+
+    
+.doc-topic {
+  margin-bottom: 28px;
+}
+.doc-topic h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.doc-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  transition: border-color 0.15s;
+}
+.doc-item:hover { border-color: #93c5fd; }
+.doc-item .doc-title {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 14px;
+}
+.doc-item .doc-title a {
+  color: inherit;
+}
+.doc-item .doc-title a:hover { color: #2563eb; }
+.doc-item .doc-desc {
+  font-size: 13px;
+  color: #6b7280;
+  flex: 1;
+}
+.doc-item .doc-date {
+  font-size: 12px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+.doc-link-icon { font-size: 12px; color: #9ca3af; margin-left: 4px; }
+
+  </style>
+  
+</head>
+<body>
+  
+
+  <header>
+    <a href="./index.html" class="site-name">
+      宏福苑獨立委員會聽證會
+      <span>聽證會資料庫</span>
+    </a>
+    <span class="header-tag">資料搜集用途</span>
+  </header>
+
+  <div class="layout">
+    <!-- 側欄 -->
+    <nav class="sidebar">
+      <a href="./index.html" class="nav-item ">口供</a>
+      <a href="./documents.html" class="nav-item active">文件</a>
+      <a href="./lawyers.html" class="nav-item ">代表律師</a>
+      <a href="https://www.ic-wangfukcourtfire.gov.hk/chi/timetable.html" class="nav-item" target="_blank" rel="noopener">證人作供時間表</a>
+    </nav>
+
+    <!-- 主內容 -->
+    <div class="main">
+      
+<div>
+  <div style="margin-bottom:28px">
+    <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin-bottom:4px">文件資料庫</h1>
+    <p style="font-size:14px;color:#6b7280">按議題整理的常用文件及連結。</p>
+  </div>
+
+  
+    
+    <div class="doc-topic">
+      <h2>消防相關</h2>
+      
+      <div class="doc-list">
+        
+        <div class="doc-item">
+          <div class="doc-title">
+            
+              <a href="https://www.hkfsd.gov.hk/chi/forms/fsi_shutdown.pdf" target="_blank" rel="noopener">消防裝置關閉通知書（SDN）<span class="doc-link-icon">↗</span></a>
+            
+          </div>
+          
+          
+        </div>
+        
+        <div class="doc-item">
+          <div class="doc-title">
+            
+              <a href="https://www.hkfsd.gov.hk/eng/source/safety/File2022.pdf" target="_blank" rel="noopener">Code of Practice 2022.09<span class="doc-link-icon">↗</span></a>
+            
+          </div>
+          <div class="doc-desc">最低限度之消防裝置及設備守則與裝置及設備之檢查、測試及保養守則</div>
+          
+        </div>
+        
+        <div class="doc-item">
+          <div class="doc-title">
+            
+              <a href="https://www.hkfsd.gov.hk/chi/source/safety/File2022C.pdf" target="_blank" rel="noopener">最低限度之消防裝置及設備守則與裝置及設備之檢查、測試及保養守則 2022.09<span class="doc-link-icon">↗</span></a>
+            
+          </div>
+          <div class="doc-desc">CODES OF PRACTICE FOR MINIMUM FIRE SERVICE INSTALLATIONS AND EQUIPMENT AND INSPECTION, TESTING AND MAINTENANCE OF INSTALLATIONS AND EQUIPMENT</div>
+          
+        </div>
+        
+        <div class="doc-item">
+          <div class="doc-title">
+            
+              <a href="https://www.hkfsd.gov.hk/chi/source/circular/2025_05_chi_20250910_185641.pdf" target="_blank" rel="noopener">消防裝置及設備證書（F.S. 251）<span class="doc-link-icon">↗</span></a>
+            
+          </div>
+          
+          
+        </div>
+        
+      </div>
+      
+    </div>
+    
+    <div class="doc-topic">
+      <h2>中華發展</h2>
+      
+      <div class="doc-list">
+        
+        <div class="doc-item">
+          <div class="doc-title">
+            
+              註冊消防裝置承辦商紀律委員會的命令
+            
+          </div>
+          <div class="doc-desc">因無交SDN被停牌三星期</div>
+          <div class="doc-date">2022-01-15</div>
+        </div>
+        
+      </div>
+      
+    </div>
+    
+  
+</div>
+
+    </div>
+  </div>
+</body>
+</html>

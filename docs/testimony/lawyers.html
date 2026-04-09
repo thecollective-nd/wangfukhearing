@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>代表律師 — 宏福苑獨立委員會聽證會</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif;
+      font-size: 15px;
+      color: #1a1a1a;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    /* ── 頂部欄 ── */
+    header {
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      text-decoration: none;
+    }
+    .site-name span { color: #64748b; font-weight: 400; margin-left: 8px; font-size: 12px; }
+    .header-tag {
+      background: #1e3a5f;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── 整體佈局 ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── 側欄 ── */
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e2e8f0;
+      padding: 24px 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+    }
+    .sidebar-section {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 18px;
+      margin: 18px 0 6px;
+    }
+    .sidebar-section:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 18px;
+      font-size: 14px;
+      color: #374151;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+    }
+    .nav-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      text-decoration: none;
+    }
+    .nav-item.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-left-color: #2563eb;
+      font-weight: 600;
+    }
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    /* ── 主內容 ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px 36px;
+    }
+
+    /* 卡片 */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    /* 徽章 */
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin: 2px 3px 2px 0;
+    }
+    .tag-day { background: #f0fdf4; color: #15803d; }
+
+    /* 口供正文 */
+    .testimony-body p {
+      line-height: 1.9;
+      margin-bottom: 1em;
+      color: #374151;
+    }
+    .testimony-body p:last-child { margin-bottom: 0; }
+
+    /* 連結 */
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* 預覽標示 */
+    .preview-banner {
+      background: #fef9c3;
+      border-bottom: 2px solid #eab308;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #854d0e;
+    }
+
+    /* 手機：側欄收起 */
+    @media (max-width: 680px) {
+      .sidebar { display: none; }
+      .main { padding: 20px 16px; }
+    }
+
+    
+  </style>
+  
+</head>
+<body>
+  
+
+  <header>
+    <a href="./index.html" class="site-name">
+      宏福苑獨立委員會聽證會
+      <span>聽證會資料庫</span>
+    </a>
+    <span class="header-tag">資料搜集用途</span>
+  </header>
+
+  <div class="layout">
+    <!-- 側欄 -->
+    <nav class="sidebar">
+      <a href="./index.html" class="nav-item ">口供</a>
+      <a href="./documents.html" class="nav-item ">文件</a>
+      <a href="./lawyers.html" class="nav-item active">代表律師</a>
+      <a href="https://www.ic-wangfukcourtfire.gov.hk/chi/timetable.html" class="nav-item" target="_blank" rel="noopener">證人作供時間表</a>
+    </nav>
+
+    <!-- 主內容 -->
+    <div class="main">
+      
+<div>
+  <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin-bottom:24px">各方代表律師</h1>
+
+  <div class="card">
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:10px 14px;font-size:12px;font-weight:700;color:#6b7280;background:#f8fafc;border-bottom:1px solid #e2e8f0">當事方</th>
+          <th style="text-align:left;padding:10px 14px;font-size:12px;font-weight:700;color:#6b7280;background:#f8fafc;border-bottom:1px solid #e2e8f0">代表律師</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">獨立委員會</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">杜淦堃資深大律師、俞匡庭大律師、李澍桓大律師、馮天榮大律師、張天風大律師、李俊軒大律師（受羅文錦律師樓指示）</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">置邦興業有限公司</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">許偉強資深大律師、何卓衡大律師、楊志聰大律師</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">政府</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">孫靖乾資深大律師、卓元暢大律師、陸栩然大律師、劉逸冲大律師</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">市區重建局</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">呂世杰資深大律師、阮文躍大律師</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">律政司</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">劉思遠先生、張錦慧女士</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">競爭事務委員會</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">李曉亮先生、蕭雅怡女士</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">合安管理有限公司</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">林子衡律師、文國灝大律師（受胡關李羅律師行指示）</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">宏泰消防工程有限公司</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">林樂夫大律師</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">宏福苑業主立案法團第十二屆管理委員會</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">李律仁資深大律師、柯愷欣大律師</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">梁秉基先生</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">關有禮大律師、陳熾龍大律師</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">黃俠然先生</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">鐘浩怡律師、何光偉律師（受韓潤燊律師樓指示）</td>
+        </tr>
+        
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600">宏福苑居民</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#374151">譚俊傑大律師、李峰琦大律師、劉晉安大律師</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+    </div>
+  </div>
+</body>
+</html>

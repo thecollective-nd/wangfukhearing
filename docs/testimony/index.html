@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>口供資料庫 — 宏福苑獨立委員會聽證會</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif;
+      font-size: 15px;
+      color: #1a1a1a;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    /* ── 頂部欄 ── */
+    header {
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      text-decoration: none;
+    }
+    .site-name span { color: #64748b; font-weight: 400; margin-left: 8px; font-size: 12px; }
+    .header-tag {
+      background: #1e3a5f;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── 整體佈局 ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── 側欄 ── */
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e2e8f0;
+      padding: 24px 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+    }
+    .sidebar-section {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 18px;
+      margin: 18px 0 6px;
+    }
+    .sidebar-section:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 18px;
+      font-size: 14px;
+      color: #374151;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+    }
+    .nav-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      text-decoration: none;
+    }
+    .nav-item.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-left-color: #2563eb;
+      font-weight: 600;
+    }
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    /* ── 主內容 ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px 36px;
+    }
+
+    /* 卡片 */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    /* 徽章 */
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin: 2px 3px 2px 0;
+    }
+    .tag-day { background: #f0fdf4; color: #15803d; }
+
+    /* 口供正文 */
+    .testimony-body p {
+      line-height: 1.9;
+      margin-bottom: 1em;
+      color: #374151;
+    }
+    .testimony-body p:last-child { margin-bottom: 0; }
+
+    /* 連結 */
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* 預覽標示 */
+    .preview-banner {
+      background: #fef9c3;
+      border-bottom: 2px solid #eab308;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #854d0e;
+    }
+
+    /* 手機：側欄收起 */
+    @media (max-width: 680px) {
+      .sidebar { display: none; }
+      .main { padding: 20px 16px; }
+    }
+
+    
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.search-bar input[type=search] {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+}
+.search-bar input[type=search]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+.search-bar select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  cursor: pointer;
+}
+.result-count {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+.testimony-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 12px;
+  transition: border-color 0.15s;
+}
+.testimony-card:hover { border-color: #93c5fd; }
+.testimony-card .meta {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.testimony-card .witness-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  cursor: pointer;
+}
+.testimony-card .witness-name:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+.testimony-card .witness-role {
+  font-size: 13px;
+  color: #6b7280;
+}
+.testimony-card .tags { margin-bottom: 10px; }
+.testimony-card .excerpt {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.testimony-card .card-footer {
+  margin-top: 10px;
+  font-size: 13px;
+}
+.no-results {
+  text-align: center;
+  color: #9ca3af;
+  padding: 48px 0;
+}
+
+  </style>
+  
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7/dist/fuse.min.js"></script>
+
+</head>
+<body>
+  
+
+  <header>
+    <a href="./index.html" class="site-name">
+      宏福苑獨立委員會聽證會
+      <span>聽證會資料庫</span>
+    </a>
+    <span class="header-tag">資料搜集用途</span>
+  </header>
+
+  <div class="layout">
+    <!-- 側欄 -->
+    <nav class="sidebar">
+      <a href="./index.html" class="nav-item active">口供</a>
+      <a href="./documents.html" class="nav-item ">文件</a>
+      <a href="./lawyers.html" class="nav-item ">代表律師</a>
+      <a href="https://www.ic-wangfukcourtfire.gov.hk/chi/timetable.html" class="nav-item" target="_blank" rel="noopener">證人作供時間表</a>
+    </nav>
+
+    <!-- 主內容 -->
+    <div class="main">
+      
+<div>
+
+  <div style="margin-bottom:24px">
+    <h1 style="font-size:22px;font-weight:700;color:#0f172a;margin-bottom:4px">口供資料庫</h1>
+    <p style="font-size:14px;color:#6b7280">按證人、聽證日或議題瀏覽，或直接搜索內容。</p>
+  </div>
+
+  
+  <div class="search-bar">
+    <input type="search" id="searchInput" placeholder="搜索口供內容、證人姓名、議題…" autocomplete="off">
+    <select id="filterDay">
+      <option value="">所有聽證日</option>
+      
+    </select>
+    <select id="filterWitness">
+      <option value="">所有證人</option>
+      
+    </select>
+    <select id="filterTopic">
+      <option value="">所有議題</option>
+      
+    </select>
+  </div>
+
+  <div class="result-count" id="resultCount"></div>
+  <div id="results"></div>
+
+</div>
+
+<script>
+const DATA = [];
+
+const fuse = new Fuse(DATA, {
+  keys: [
+    { name: 'witness_name', weight: 2 },
+    { name: 'witness_org', weight: 2 },
+    { name: 'witness_role', weight: 1 },
+    { name: 'topic_names', weight: 1.5 },
+    { name: 'content', weight: 1 }
+  ],
+  threshold: 0.35,
+  includeScore: true,
+  ignoreLocation: true,
+  minMatchCharLength: 2
+});
+
+const searchInput  = document.getElementById('searchInput');
+const filterDay    = document.getElementById('filterDay');
+const filterWitness= document.getElementById('filterWitness');
+const filterTopic  = document.getElementById('filterTopic');
+const resultsEl    = document.getElementById('results');
+const countEl      = document.getElementById('resultCount');
+
+function excerpt(text, maxLen) {
+  if (!text) return '';
+  const clean = text.replace(/\n+/g, ' ').trim();
+  return clean.length > maxLen ? clean.slice(0, maxLen) + '…' : clean;
+}
+
+function groupByWitness(items) {
+  // 按 witness_id 分組，保留順序（以第一次出現為準）
+  const order = [];
+  const map = {};
+  for (const t of items) {
+    const wid = t.witness_id || t.id;
+    if (!map[wid]) {
+      map[wid] = {
+        witness_id: wid,
+        witness_name: t.witness_name,
+        witness_org: t.witness_org,
+        witness_role: t.witness_role,
+        url: `witnesses/${wid}.html`,
+        days: [],
+        topic_names: [],
+        testimony_type_labels: [],
+        best_excerpt: t.content,
+      };
+      order.push(wid);
+    }
+    const g = map[wid];
+    if (t.day_label && !g.days.includes(t.day_label)) g.days.push(t.day_label);
+    for (const n of t.topic_names) {
+      if (!g.topic_names.includes(n)) g.topic_names.push(n);
+    }
+    if (t.testimony_type_label && !g.testimony_type_labels.includes(t.testimony_type_label))
+      g.testimony_type_labels.push(t.testimony_type_label);
+  }
+  return order.map(wid => map[wid]);
+}
+
+function render(items) {
+  const grouped = groupByWitness(items);
+  countEl.textContent = `共 ${grouped.length} 位證人`;
+  if (!grouped.length) {
+    resultsEl.innerHTML = '<div class="no-results">沒有符合條件的記錄。</div>';
+    return;
+  }
+  resultsEl.innerHTML = grouped.map(g => `
+    <div class="testimony-card">
+      <div class="meta">
+        <a class="witness-name" href="${g.url}" style="color:inherit;text-decoration:none">${g.witness_name || '—'}</a>
+        ${g.witness_org ? `<span class="witness-role">${g.witness_org}</span>` : ''}
+        ${g.witness_role ? `<span class="witness-role">（${g.witness_role}）</span>` : ''}
+      </div>
+      <div class="tags">
+        ${g.days.map(d => `<span class="tag tag-day">${d}</span>`).join('')}
+        ${g.testimony_type_labels.map(l => `<span class="tag" style="background:#f5f3ff;color:#6d28d9">${l}</span>`).join('')}
+        ${g.topic_names.map(n => `<span class="tag">${n}</span>`).join('')}
+      </div>
+      <div class="excerpt">${excerpt(g.best_excerpt, 180)}</div>
+    </div>
+  `).join('');
+}
+
+function doFilter() {
+  const query   = searchInput.value.trim();
+  const dayVal  = filterDay.value;
+  const witnessVal = filterWitness.value;
+  const topicVal= filterTopic.value;
+
+  let results = query ? fuse.search(query).map(r => r.item) : [...DATA];
+
+  if (dayVal)     results = results.filter(t => t.day_id === dayVal);
+  if (witnessVal) results = results.filter(t => t.witness_id === witnessVal);
+  if (topicVal)   results = results.filter(t => t.topic_ids.includes(topicVal));
+
+  render(results);
+}
+
+searchInput.addEventListener('input', doFilter);
+filterDay.addEventListener('change', doFilter);
+filterWitness.addEventListener('change', doFilter);
+filterTopic.addEventListener('change', doFilter);
+
+// 初始顯示
+doFilter();
+</script>
+
+    </div>
+  </div>
+</body>
+</html>
