@@ -1,0 +1,51 @@
+name: 部署口供資料庫
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/testimonies.json'
+      - 'data/people.json'
+      - 'data/days.json'
+      - 'data/topics.json'
+      - 'data/documents.json'
+      - 'data/lawyers.json'
+      - 'templates/testimony/**'
+      - 'build_testimony.py'
+  workflow_dispatch:  # 允許手動觸發
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: testimony
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 取出程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安裝依賴
+        run: pip install jinja2
+
+      - name: 生成靜態網站
+        run: python3 build_testimony.py
+
+      - name: 上傳 Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-testimony/
+
+      - name: 部署至 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,154 @@
+{% extends "testimony/base.html" %}
+{% set root = '..' %}
+{% set section = 'testimonies' %}
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block extra_styles %}
+.person-header {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.person-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.person-header .meta {
+  font-size: 14px;
+  color: #6b7280;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.person-header .meta .sep { color: #d1d5db; }
+.person-header .desc {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.8;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 14px;
+}
+
+.testimony-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  scroll-margin-top: 24px;
+}
+.testimony-section .section-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.testimony-section .section-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.testimony-body p {
+  line-height: 1.9;
+  margin-bottom: 1em;
+  color: #374151;
+}
+.testimony-body p:last-child { margin-bottom: 0; }
+
+.evidence-list {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+.evidence-list h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.evidence-item {
+  font-size: 13px;
+  color: #374151;
+  padding: 4px 0;
+}
+.evidence-item .ev-title { font-weight: 600; }
+.evidence-item .ev-desc { color: #6b7280; margin-left: 6px; }
+
+.back-link {
+  display: inline-block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+.back-link:hover { color: #2563eb; }
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  {# ── 人物基本資料 ── #}
+  <div class="person-header">
+    <h1>{{ person.name }}</h1>
+    <div class="meta">
+      {% if person.role %}<span>{{ person.role }}</span>{% endif %}
+      {% if person.role and person.represented_by %}<span class="sep">·</span>{% endif %}
+      {% if person.represented_by %}<span>{{ person.represented_by }}</span>{% endif %}
+    </div>
+    {% if person.description %}
+    <div class="desc">{{ person.description | replace('\n', '<br>') | safe }}</div>
+    {% endif %}
+  </div>
+
+  {# ── 口供記錄（每段一個 section）── #}
+  {% for t in testimonies %}
+  <div class="testimony-section" id="testimony-{{ t.id }}">
+    <div class="section-header">
+      <h2>
+        {% if t.day %}第{{ t.day.day_number }}天{% if t.day.date %}（{{ t.day.date }}）{% endif %}{% endif %}
+      </h2>
+      {% if t.day_label %}<span class="tag tag-day">{{ t.day_label }}</span>{% endif %}
+      {% if t.testimony_type_label %}
+        <span class="tag" style="background:#f5f3ff;color:#6d28d9">{{ t.testimony_type_label }}</span>
+      {% endif %}
+      {% for tp in t.topics_data %}
+        <span class="tag">{{ tp.name }}</span>
+      {% endfor %}
+    </div>
+
+    <div class="testimony-body">
+      {{ t.content | text_to_html | safe }}
+    </div>
+
+    {% if t.evidence %}
+    <div class="evidence-list">
+      <h4>提交證據</h4>
+      {% for item in t.evidence %}
+      <div class="evidence-item">
+        <span class="ev-title">{{ item.title }}</span>
+        {% if item.description %}<span class="ev-desc">{{ item.description }}</span>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  {% if not testimonies %}
+  <div style="text-align:center;color:#9ca3af;padding:48px 0">
+    尚無口供記錄。
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

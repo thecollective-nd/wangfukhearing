@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% block title %}口供記錄{% endblock %}
+{% block page_title %}📋 口供記錄{% endblock %}
+{% block topbar_actions %}
+  <a href="/testimonies/new" class="btn btn-primary">＋ 新增口供</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>證人</th>
+        <th>聽證日</th>
+        <th>相關議題</th>
+        <th>狀態</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in testimonies %}
+      <tr>
+        <td style="font-weight:600">
+          {{ people_map[t.witness_id].name if t.witness_id in people_map else '—' }}
+          {% if t.witness_id in people_map and people_map[t.witness_id].role %}
+            <br><span style="font-size:12px;color:#6b7280;font-weight:400">{{ people_map[t.witness_id].role }}</span>
+          {% endif %}
+        </td>
+        <td style="color:#6b7280;font-size:13px">
+          {% set day = days_map.get(t.day_id) %}
+          {% if day %}第{{ day.day_number }}天（{{ day.date }}）{% else %}—{% endif %}
+        </td>
+        <td>
+          {% for tid in t.topic_ids %}
+            {% if tid in topics_map %}
+              <span class="badge badge-gray">{{ topics_map[tid].name }}</span>
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% if t.published %}
+            <span class="badge badge-green">已發布</span>
+          {% else %}
+            <span class="badge badge-gray">草稿</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="/testimonies/{{ t.id }}/edit" class="btn btn-gray btn-sm">編輯</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" style="text-align:center;color:#9ca3af;padding:40px">
+          尚無口供記錄。<a href="/testimonies/new">新增第一條</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

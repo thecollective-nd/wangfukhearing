@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ '編輯文件' if doc else '新增文件' }}{% endblock %}
+{% block page_title %}{{ '編輯文件' if doc else '新增文件' }}{% endblock %}
+{% block topbar_actions %}
+  <a href="/documents" class="btn btn-gray">← 返回文件資料庫</a>
+{% endblock %}
+
+{% block content %}
+
+<div style="max-width:640px">
+  <p style="font-size:13px;color:#6b7280;margin-bottom:20px">
+    議題：<strong>{{ topic.name }}</strong>
+  </p>
+
+  <div class="card">
+    <form method="post">
+      <label>文件名稱 <span style="color:#ef4444">*</span></label>
+      <input type="text" name="title" value="{{ doc.title if doc else '' }}"
+        placeholder="例：外牆維修合約（第一期）" required>
+
+      <label>連結網址</label>
+      <input type="url" name="url" value="{{ doc.url if doc else '' }}"
+        placeholder="https://...">
+
+      <label>說明（選填）</label>
+      <input type="text" name="description" value="{{ doc.description if doc else '' }}"
+        placeholder="例：房署2019年提交聽證會的文件">
+
+      <label>日期（選填）</label>
+      <input type="text" name="date" value="{{ doc.date if doc else '' }}"
+        placeholder="例：2019-03-15">
+
+      <div style="margin-top:8px;display:flex;gap:10px;align-items:center">
+        <button type="submit" class="btn btn-primary">{{ '儲存' if doc else '加入' }}</button>
+        <a href="/documents" style="font-size:13px;color:#6b7280">取消</a>
+      </div>
+    </form>
+  </div>
+
+  {% if doc is not none and doc_idx is not none %}
+  <form method="post"
+    action="/documents/topics/{{ topic.id }}/documents/{{ doc_idx }}/delete"
+    onsubmit="return confirm('確定刪除「{{ doc.title }}」？')"
+    style="margin-top:4px">
+    <button class="btn btn-red btn-sm">刪除此文件</button>
+  </form>
+  {% endif %}
+</div>
+
+{% endblock %}

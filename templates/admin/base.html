@@ -244,13 +244,17 @@
       <a href="/days" {% if '/days' in request.path %}class="active"{% endif %}>📅 聽證日</a>
       <a href="/topics" {% if '/topics' in request.path %}class="active"{% endif %}>🏷️ 議題分類</a>
       <a href="/people" {% if '/people' in request.path %}class="active"{% endif %}>👤 人物／機構</a>
+      <a href="/residents" {% if '/residents' in request.path %}class="active"{% endif %}>🏘️ 居民心聲</a>
+      <a href="/testimonies" {% if '/testimonies' in request.path %}class="active"{% endif %}>📋 口供記錄</a>
+      <a href="/documents" {% if '/documents' in request.path %}class="active"{% endif %}>📄 文件資料庫</a>
+      <a href="/support" {% if request.path == '/support' %}class="active"{% endif %}>🤝 支持記者</a>
 
       <div class="section-label">工具</div>
       <a href="/search">🔍 搜尋謄本</a>
       <a href="/settings">⚙️ 網站設定</a>
 
       <div class="section-label">預覽</div>
-      <a href="/docs/index.html" target="_blank">🌐 開啟本地預覽</a>
+      <a href="/preview-site/" target="_blank">🌐 開啟本地預覽</a>
     </nav>
   </aside>
 

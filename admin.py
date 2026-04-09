@@ -9,7 +9,7 @@ import os
 import json
 import subprocess
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 import pdfplumber
 
 app = Flask(__name__)
@@ -45,6 +45,12 @@ def get_all_topics():
 def get_all_people():
     return load_json('people.json')['people']
 
+def get_all_residents():
+    return load_json('residents.json')['residents']
+
+def get_all_testimonies():
+    return load_json('testimonies.json')['testimonies']
+
 def get_settings():
     return load_json('settings.json')
 
@@ -55,17 +61,61 @@ def now_str():
     return datetime.now().strftime('%Y-%m-%d %H:%M')
 
 # ──────────────────────────────────────────────
-# 謄本搜尋（全文索引，啟動時載入）
+# 謄本搜尋（索引緩存至檔案，只在 PDF 有更新時重建）
 # ──────────────────────────────────────────────
 
-transcript_index = {}  # { 'day1': [(line_no, text), ...], ... }
+transcript_index = {}
+INDEX_CACHE_PATH = os.path.join(DATA_DIR, 'transcript_index.json')
 
-def build_transcript_index():
-    global transcript_index
+def get_pdf_fingerprint():
+    """取得所有謄本 PDF 的最後修改時間，用作緩存有效性判斷"""
+    fingerprint = {}
     for i in range(1, 20):
         pdf_path = os.path.join(TRANSCRIPT_DIR, f'day{i}.pdf')
         if not os.path.exists(pdf_path):
             break
+        fingerprint[f'day{i}'] = os.path.getmtime(pdf_path)
+    return fingerprint
+
+def build_transcript_index():
+    global transcript_index
+
+    current_fingerprint = get_pdf_fingerprint()
+
+    # 嘗試載入緩存
+    if os.path.exists(INDEX_CACHE_PATH):
+        try:
+            with open(INDEX_CACHE_PATH, 'r', encoding='utf-8') as f:
+                cache = json.load(f)
+            if cache.get('fingerprint') == current_fingerprint:
+                transcript_index = {k: [tuple(x) for x in v]
+                                    for k, v in cache['index'].items()}
+                print(f'謄本索引從緩存載入，共 {len(transcript_index)} 份（即時完成）')
+                return
+            else:
+                print('偵測到新謄本 PDF，重新建立索引...')
+        except Exception:
+            print('緩存讀取失敗，重新建立索引...')
+    else:
+        print('首次建立謄本索引，請稍候...')
+
+    # 重新掃描 PDF（從 days.json 讀取 pdf_file 欄位）
+    new_index = {}
+    try:
+        days_data = load_json('days.json')['days']
+    except Exception:
+        days_data = []
+
+    for day in sorted(days_data, key=lambda d: d.get('day_number', 0)):
+        day_id = day.get('id', '')
+        pdf_filename = day.get('pdf_file', '').strip()
+        if not pdf_filename:
+            # 沒有填 pdf_file 則跳過
+            continue
+        pdf_path = os.path.join(TRANSCRIPT_DIR, pdf_filename)
+        if not os.path.exists(pdf_path):
+            print(f'警告：找不到 {pdf_filename}，跳過')
+            continue
         lines = []
         try:
             with pdfplumber.open(pdf_path) as pdf:
@@ -74,16 +124,23 @@ def build_transcript_index():
                     for line in text.split('\n'):
                         line = line.strip()
                         if line:
-                            # 嘗試提取行號
                             parts = line.split(' ', 1)
                             if parts[0].isdigit() and len(parts) > 1:
                                 lines.append((int(parts[0]), parts[1]))
                             else:
                                 lines.append((0, line))
         except Exception as e:
-            print(f'警告：無法讀取 day{i}.pdf: {e}')
-        transcript_index[f'day{i}'] = lines
-    print(f'謄本索引建立完成，共 {len(transcript_index)} 份。')
+            print(f'警告：無法讀取 {pdf_filename}: {e}')
+        new_index[day_id] = lines
+        print(f'  ✓ {pdf_filename}')
+
+    transcript_index = new_index
+
+    # 儲存緩存
+    with open(INDEX_CACHE_PATH, 'w', encoding='utf-8') as f:
+        json.dump({'fingerprint': current_fingerprint, 'index': new_index},
+                  f, ensure_ascii=False)
+    print(f'謄本索引建立完成並已緩存，共 {len(transcript_index)} 份。')
 
 def search_transcripts(query, max_results=50):
     results = []
@@ -149,6 +206,7 @@ def day_edit(day_id):
         day['topic_ids'] = request.form.getlist('topic_ids')
         # 人物關聯
         day['people_ids'] = request.form.getlist('people_ids')
+        day['pdf_file'] = request.form.get('pdf_file', '').strip()
         day['published'] = 'published' in request.form
         day['updated_at'] = now_str()
         save_json('days.json', data)
@@ -337,18 +395,20 @@ def person_new():
             'name': request.form.get('name', '').strip(),
             'type': request.form.get('type', 'individual'),
             'role': request.form.get('role', '').strip(),
-            'description': '',
+            'description': request.form.get('description', '').strip(),
             'represented_by': request.form.get('represented_by', '').strip(),
-            'day_ids': [],
-            'topic_ids': [],
-            'published': False,
+            'day_ids': request.form.getlist('day_ids'),
+            'topic_ids': request.form.getlist('topic_ids'),
+            'published': 'published' in request.form,
             'updated_at': now_str()
         }
         data['people'].append(new_person)
         save_json('people.json', data)
         flash(f'「{new_person["name"]}」已建立', 'success')
         return redirect(url_for('person_edit', person_id=new_id))
-    return render_template('admin/person_new.html')
+    days = get_all_days()
+    topics = get_all_topics()
+    return render_template('admin/person_edit.html', person=None, days=days, topics=topics)
 
 @app.route('/people/<person_id>/edit', methods=['GET', 'POST'])
 def person_edit(person_id):
@@ -375,7 +435,28 @@ def person_edit(person_id):
         flash(f'「{person["name"]}」已儲存', 'success')
         return redirect(url_for('person_edit', person_id=person_id))
 
-    return render_template('admin/person_edit.html', person=person, days=days, topics=topics)
+    # 載入此人的口供記錄
+    testimony_data = load_json('testimonies.json')
+    all_days = get_all_days()
+    days_map = {d['id']: d for d in all_days}
+    person_testimonies = [
+        {**t, 'day': days_map.get(t.get('day_id', ''), {})}
+        for t in testimony_data['testimonies']
+        if t.get('witness_id') == person_id
+    ]
+    person_testimonies.sort(key=lambda t: t['day'].get('day_number', 999))
+
+    TESTIMONY_TYPE_LABELS = {
+        'committee_statement_1': '委員會證人陳述書／口供一',
+        'committee_statement_2': '委員會證人陳述書／口供二',
+        'police_statement': '警方口供',
+        'oral': '親身作供',
+    }
+    for t in person_testimonies:
+        t['testimony_type_label'] = TESTIMONY_TYPE_LABELS.get(t.get('testimony_type', ''), '')
+
+    return render_template('admin/person_edit.html', person=person, days=days, topics=topics,
+                           person_testimonies=person_testimonies)
 
 @app.route('/people/<person_id>/delete', methods=['POST'])
 def person_delete(person_id):
@@ -386,6 +467,204 @@ def person_delete(person_id):
         save_json('people.json', data)
         flash('已刪除', 'success')
     return redirect(url_for('people_list'))
+
+# ──────────────────────────────────────────────
+# 路由：居民心聲 (Residents)
+# ──────────────────────────────────────────────
+
+@app.route('/residents')
+def residents_list():
+    residents = get_all_residents()
+    days = get_all_days()
+    days_map = {d['id']: d for d in days}
+    return render_template('admin/residents_list.html', residents=residents, days_map=days_map)
+
+@app.route('/residents/new', methods=['GET', 'POST'])
+def resident_new():
+    data = load_json('residents.json')
+    days = get_all_days()
+    if request.method == 'POST':
+        num = len(data['residents']) + 1
+        existing_ids = [r['id'] for r in data['residents']]
+        new_id = f'resident-{num}'
+        while new_id in existing_ids:
+            num += 1
+            new_id = f'resident-{num}'
+        new_resident = {
+            'id': new_id,
+            'name': request.form.get('name', '').strip(),
+            'type': request.form.get('type', 'testimony'),
+            'role': request.form.get('role', '').strip(),
+            'content': request.form.get('content', '').strip(),
+            'day_id': request.form.get('day_id', '').strip(),
+            'published': 'published' in request.form,
+            'updated_at': now_str()
+        }
+        data['residents'].append(new_resident)
+        save_json('residents.json', data)
+        flash(f'「{new_resident["name"]}」已建立', 'success')
+        return redirect(url_for('resident_edit', resident_id=new_id))
+    return render_template('admin/resident_edit.html', resident=None, days=days)
+
+@app.route('/residents/<resident_id>/edit', methods=['GET', 'POST'])
+def resident_edit(resident_id):
+    data = load_json('residents.json')
+    resident = find_by_id(data['residents'], resident_id)
+    if not resident:
+        flash('找不到該記錄', 'error')
+        return redirect(url_for('residents_list'))
+
+    days = get_all_days()
+
+    if request.method == 'POST':
+        resident['name'] = request.form.get('name', '').strip()
+        resident['type'] = request.form.get('type', 'testimony')
+        resident['role'] = request.form.get('role', '').strip()
+        resident['content'] = request.form.get('content', '').strip()
+        resident['day_id'] = request.form.get('day_id', '').strip()
+        resident['published'] = 'published' in request.form
+        resident['updated_at'] = now_str()
+        save_json('residents.json', data)
+        flash(f'「{resident["name"]}」已儲存', 'success')
+        return redirect(url_for('resident_edit', resident_id=resident_id))
+
+    return render_template('admin/resident_edit.html', resident=resident, days=days)
+
+@app.route('/residents/<resident_id>/delete', methods=['POST'])
+def resident_delete(resident_id):
+    data = load_json('residents.json')
+    resident = find_by_id(data['residents'], resident_id)
+    if resident:
+        name = resident['name']
+        data['residents'] = [r for r in data['residents'] if r['id'] != resident_id]
+        save_json('residents.json', data)
+        flash(f'「{name}」已刪除', 'success')
+    return redirect(url_for('residents_list'))
+
+# ──────────────────────────────────────────────
+# 路由：口供記錄 (Testimonies)
+# ──────────────────────────────────────────────
+
+@app.route('/testimonies')
+def testimonies_list():
+    testimonies = get_all_testimonies()
+    people = get_all_people()
+    days = get_all_days()
+    topics = get_all_topics()
+    people_map = {p['id']: p for p in people}
+    days_map = {d['id']: d for d in days}
+    topics_map = {t['id']: t for t in topics}
+    def sort_key(t):
+        day = days_map.get(t.get('day_id', ''), {})
+        return (day.get('day_number', 999), people_map.get(t.get('witness_id', ''), {}).get('name', ''))
+    testimonies = sorted(testimonies, key=sort_key)
+    return render_template('admin/testimonies_list.html',
+        testimonies=testimonies, people_map=people_map,
+        days_map=days_map, topics_map=topics_map)
+
+@app.route('/testimonies/new', methods=['GET', 'POST'])
+def testimony_new():
+    data = load_json('testimonies.json')
+    people = get_all_people()
+    days = get_all_days()
+    topics = get_all_topics()
+    # 從人物頁新增時帶入的 person_id
+    from_person = request.args.get('from_person') or request.form.get('from_person', '')
+    if request.method == 'POST':
+        num = len(data['testimonies']) + 1
+        existing_ids = [t['id'] for t in data['testimonies']]
+        new_id = f'testimony-{num}'
+        while new_id in existing_ids:
+            num += 1
+            new_id = f'testimony-{num}'
+        new_testimony = {
+            'id': new_id,
+            'witness_id': request.form.get('witness_id', ''),
+            'day_id': request.form.get('day_id', ''),
+            'testimony_type': request.form.get('testimony_type', ''),
+            'topic_ids': request.form.getlist('topic_ids'),
+            'content': request.form.get('content', '').strip(),
+            'evidence': [],
+            'published': 'published' in request.form,
+            'updated_at': now_str()
+        }
+        data['testimonies'].append(new_testimony)
+        save_json('testimonies.json', data)
+        flash('口供記錄已建立', 'success')
+        back_pid = request.form.get('from_person', '')
+        if back_pid:
+            return redirect(url_for('person_edit', person_id=back_pid))
+        return redirect(url_for('testimony_edit', testimony_id=new_id))
+    return render_template('admin/testimony_edit.html',
+        testimony=None, people=people, days=days, topics=topics,
+        from_person=from_person)
+
+@app.route('/testimonies/<testimony_id>/edit', methods=['GET', 'POST'])
+def testimony_edit(testimony_id):
+    data = load_json('testimonies.json')
+    testimony = find_by_id(data['testimonies'], testimony_id)
+    if not testimony:
+        flash('找不到該記錄', 'error')
+        return redirect(url_for('testimonies_list'))
+    people = get_all_people()
+    days = get_all_days()
+    topics = get_all_topics()
+    from_person = request.args.get('from_person') or request.form.get('from_person', '')
+    if request.method == 'POST':
+        testimony['witness_id'] = request.form.get('witness_id', '')
+        testimony['day_id'] = request.form.get('day_id', '')
+        testimony['testimony_type'] = request.form.get('testimony_type', '')
+        testimony['topic_ids'] = request.form.getlist('topic_ids')
+        testimony['content'] = request.form.get('content', '').strip()
+        testimony['published'] = 'published' in request.form
+        testimony['updated_at'] = now_str()
+        save_json('testimonies.json', data)
+        flash('已儲存', 'success')
+        back_pid = request.form.get('from_person', '')
+        if back_pid:
+            return redirect(url_for('person_edit', person_id=back_pid))
+        return redirect(url_for('testimony_edit', testimony_id=testimony_id))
+    return render_template('admin/testimony_edit.html',
+        testimony=testimony, people=people, days=days, topics=topics,
+        from_person=from_person)
+
+@app.route('/testimonies/<testimony_id>/delete', methods=['POST'])
+def testimony_delete(testimony_id):
+    data = load_json('testimonies.json')
+    back_pid = request.form.get('from_person', '')
+    data['testimonies'] = [t for t in data['testimonies'] if t['id'] != testimony_id]
+    save_json('testimonies.json', data)
+    flash('已刪除', 'success')
+    if back_pid:
+        return redirect(url_for('person_edit', person_id=back_pid))
+    return redirect(url_for('testimonies_list'))
+
+@app.route('/testimonies/<testimony_id>/evidence/add', methods=['POST'])
+def testimony_evidence_add(testimony_id):
+    data = load_json('testimonies.json')
+    testimony = find_by_id(data['testimonies'], testimony_id)
+    if testimony:
+        item = {
+            'title': request.form.get('title', '').strip(),
+            'description': request.form.get('description', '').strip()
+        }
+        if item['title']:
+            testimony.setdefault('evidence', []).append(item)
+            testimony['updated_at'] = now_str()
+            save_json('testimonies.json', data)
+            flash('證據已加入', 'success')
+    return redirect(url_for('testimony_edit', testimony_id=testimony_id))
+
+@app.route('/testimonies/<testimony_id>/evidence/delete/<int:idx>', methods=['POST'])
+def testimony_evidence_delete(testimony_id, idx):
+    data = load_json('testimonies.json')
+    testimony = find_by_id(data['testimonies'], testimony_id)
+    if testimony and 0 <= idx < len(testimony.get('evidence', [])):
+        testimony['evidence'].pop(idx)
+        testimony['updated_at'] = now_str()
+        save_json('testimonies.json', data)
+        flash('已刪除', 'success')
+    return redirect(url_for('testimony_edit', testimony_id=testimony_id))
 
 # ──────────────────────────────────────────────
 # 路由：謄本搜尋
@@ -461,21 +740,70 @@ def publish():
 
     return redirect(url_for('dashboard'))
 
-@app.route('/preview', methods=['POST'])
-def preview_build():
-    """只生成靜態文件，不推送到 GitHub"""
+@app.route('/preview-site/')
+@app.route('/preview-site/<path:filename>')
+def preview_site(filename='index.html'):
+    """在後台內直接預覽生成的網站"""
+    return send_from_directory(os.path.join(BASE_DIR, 'docs'), filename)
+
+@app.route('/preview-testimony-site/')
+@app.route('/preview-testimony-site/<path:filename>')
+def preview_testimony_site(filename='index.html'):
+    return send_from_directory(os.path.join(BASE_DIR, 'docs-testimony'), filename)
+
+@app.route('/preview-testimony', methods=['POST'])
+def preview_testimony_build():
     try:
         result = subprocess.run(
-            ['python3', os.path.join(BASE_DIR, 'build.py')],
+            ['python3', os.path.join(BASE_DIR, 'build_testimony.py'), '--preview'],
             capture_output=True, text=True, cwd=BASE_DIR
         )
         if result.returncode != 0:
-            flash(f'生成失敗：{result.stderr}', 'error')
-        else:
-            flash('網站已生成（本地預覽），尚未發布到 GitHub', 'success')
+            return f'<p>生成失敗：{result.stderr}</p>', 500
+        from flask import redirect
+        return redirect('/preview-testimony-site/')
     except Exception as e:
-        flash(f'生成時出錯：{str(e)}', 'error')
-    return redirect(url_for('dashboard'))
+        return f'<p>生成時出錯：{str(e)}</p>', 500
+
+@app.route('/preview', methods=['POST'])
+def preview_build():
+    """預覽模式：生成含草稿的完整網站，完成後跳轉至預覽頁（在新分頁開啟）"""
+    try:
+        result = subprocess.run(
+            ['python3', os.path.join(BASE_DIR, 'build.py'), '--preview'],
+            capture_output=True, text=True, cwd=BASE_DIR
+        )
+        if result.returncode != 0:
+            return f'<p>生成失敗：{result.stderr}</p>', 500
+        from flask import redirect
+        return redirect('/preview-site/')
+    except Exception as e:
+        return f'<p>生成時出錯：{str(e)}</p>', 500
+
+# ──────────────────────────────────────────────
+# 路由：支持記者
+# ──────────────────────────────────────────────
+
+@app.route('/support', methods=['GET', 'POST'])
+def support_page():
+    support = load_json('support.json')
+    if request.method == 'POST':
+        support['block_1'] = {
+            'title':     request.form.get('block_1_title', '').strip(),
+            'content':   request.form.get('block_1_content', '').strip(),
+            'url':       request.form.get('block_1_url', '').strip(),
+            'url_label': request.form.get('block_1_url_label', '').strip(),
+        }
+        support['block_2'] = {
+            'title':     request.form.get('block_2_title', '').strip(),
+            'content':   request.form.get('block_2_content', '').strip(),
+            'url':       request.form.get('block_2_url', '').strip(),
+            'url_label': request.form.get('block_2_url_label', '').strip(),
+        }
+        save_json('support.json', support)
+        flash('支持記者頁面已儲存', 'success')
+        return redirect(url_for('support_page'))
+    return render_template('admin/support_edit.html', support=support)
 
 # ──────────────────────────────────────────────
 # 設定
@@ -496,13 +824,108 @@ def settings_page():
     return render_template('admin/settings.html', settings=settings)
 
 # ──────────────────────────────────────────────
+# 路由：文件資料庫
+# ──────────────────────────────────────────────
+
+def get_documents():
+    return load_json('documents.json')
+
+def save_documents(data):
+    save_json('documents.json', data)
+
+@app.route('/documents')
+def documents_list():
+    data = get_documents()
+    return render_template('admin/documents_list.html', data=data)
+
+@app.route('/documents/topics/new', methods=['POST'])
+def document_topic_new():
+    data = get_documents()
+    name = request.form.get('name', '').strip()
+    if name:
+        import uuid
+        topic_id = 'topic-' + uuid.uuid4().hex[:8]
+        data['topics'].append({'id': topic_id, 'name': name, 'documents': []})
+        save_documents(data)
+        flash(f'議題「{name}」已建立', 'success')
+    return redirect(url_for('documents_list'))
+
+@app.route('/documents/topics/<topic_id>/rename', methods=['POST'])
+def document_topic_rename(topic_id):
+    data = get_documents()
+    topic = next((t for t in data['topics'] if t['id'] == topic_id), None)
+    if topic:
+        new_name = request.form.get('name', '').strip()
+        if new_name:
+            topic['name'] = new_name
+            save_documents(data)
+            flash('議題已更新', 'success')
+    return redirect(url_for('documents_list'))
+
+@app.route('/documents/topics/<topic_id>/delete', methods=['POST'])
+def document_topic_delete(topic_id):
+    data = get_documents()
+    data['topics'] = [t for t in data['topics'] if t['id'] != topic_id]
+    save_documents(data)
+    flash('議題已刪除', 'success')
+    return redirect(url_for('documents_list'))
+
+@app.route('/documents/topics/<topic_id>/documents/new', methods=['GET', 'POST'])
+def document_new(topic_id):
+    data = get_documents()
+    topic = next((t for t in data['topics'] if t['id'] == topic_id), None)
+    if not topic:
+        flash('找不到該議題', 'error')
+        return redirect(url_for('documents_list'))
+    if request.method == 'POST':
+        doc = {
+            'title': request.form.get('title', '').strip(),
+            'url': request.form.get('url', '').strip(),
+            'description': request.form.get('description', '').strip(),
+            'date': request.form.get('date', '').strip(),
+        }
+        topic['documents'].append(doc)
+        save_documents(data)
+        flash(f'「{doc["title"]}」已加入', 'success')
+        return redirect(url_for('documents_list'))
+    return render_template('admin/document_edit.html', topic=topic, doc=None, doc_idx=None)
+
+@app.route('/documents/topics/<topic_id>/documents/<int:doc_idx>/edit', methods=['GET', 'POST'])
+def document_edit(topic_id, doc_idx):
+    data = get_documents()
+    topic = next((t for t in data['topics'] if t['id'] == topic_id), None)
+    if not topic or doc_idx >= len(topic['documents']):
+        flash('找不到該文件', 'error')
+        return redirect(url_for('documents_list'))
+    doc = topic['documents'][doc_idx]
+    if request.method == 'POST':
+        doc['title'] = request.form.get('title', '').strip()
+        doc['url'] = request.form.get('url', '').strip()
+        doc['description'] = request.form.get('description', '').strip()
+        doc['date'] = request.form.get('date', '').strip()
+        save_documents(data)
+        flash('文件已儲存', 'success')
+        return redirect(url_for('documents_list'))
+    return render_template('admin/document_edit.html', topic=topic, doc=doc, doc_idx=doc_idx)
+
+@app.route('/documents/topics/<topic_id>/documents/<int:doc_idx>/delete', methods=['POST'])
+def document_delete(topic_id, doc_idx):
+    data = get_documents()
+    topic = next((t for t in data['topics'] if t['id'] == topic_id), None)
+    if topic and doc_idx < len(topic['documents']):
+        removed = topic['documents'].pop(doc_idx)
+        save_documents(data)
+        flash(f'「{removed["title"]}」已刪除', 'success')
+    return redirect(url_for('documents_list'))
+
+# ──────────────────────────────────────────────
 # 啟動
 # ──────────────────────────────────────────────
 
 if __name__ == '__main__':
-    print('正在建立謄本索引，請稍候...')
     build_transcript_index()
     print('後台已啟動，請在瀏覽器開啟：http://localhost:5001')
     import webbrowser
     webbrowser.open('http://localhost:5001')
-    app.run(debug=False, port=5001)
+    # use_reloader=False 避免 debug 模式下索引被建立兩次
+    app.run(debug=True, port=5001, use_reloader=True, reloader_type='stat')

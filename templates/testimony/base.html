@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}聽證會資料庫{% endblock %} — 宏福苑獨立委員會聽證會</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif;
+      font-size: 15px;
+      color: #1a1a1a;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    /* ── 頂部欄 ── */
+    header {
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      text-decoration: none;
+    }
+    .site-name span { color: #64748b; font-weight: 400; margin-left: 8px; font-size: 12px; }
+    .header-tag {
+      background: #1e3a5f;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── 整體佈局 ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── 側欄 ── */
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e2e8f0;
+      padding: 24px 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+    }
+    .sidebar-section {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 18px;
+      margin: 18px 0 6px;
+    }
+    .sidebar-section:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 18px;
+      font-size: 14px;
+      color: #374151;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+    }
+    .nav-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      text-decoration: none;
+    }
+    .nav-item.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-left-color: #2563eb;
+      font-weight: 600;
+    }
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    /* ── 主內容 ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px 36px;
+    }
+
+    /* 卡片 */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    /* 徽章 */
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin: 2px 3px 2px 0;
+    }
+    .tag-day { background: #f0fdf4; color: #15803d; }
+
+    /* 口供正文 */
+    .testimony-body p {
+      line-height: 1.9;
+      margin-bottom: 1em;
+      color: #374151;
+    }
+    .testimony-body p:last-child { margin-bottom: 0; }
+
+    /* 連結 */
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* 預覽標示 */
+    .preview-banner {
+      background: #fef9c3;
+      border-bottom: 2px solid #eab308;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #854d0e;
+    }
+
+    /* 手機：側欄收起 */
+    @media (max-width: 680px) {
+      .sidebar { display: none; }
+      .main { padding: 20px 16px; }
+    }
+
+    {% block extra_styles %}{% endblock %}
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% if preview %}
+  <div class="preview-banner">⚠️ 預覽模式——包含未發布草稿，請勿公開分享此連結</div>
+  {% endif %}
+
+  <header>
+    <a href="{{ root }}/index.html" class="site-name">
+      宏福苑獨立委員會聽證會
+      <span>聽證會資料庫</span>
+    </a>
+    <span class="header-tag">資料搜集用途</span>
+  </header>
+
+  <div class="layout">
+    <!-- 側欄 -->
+    <nav class="sidebar">
+      <a href="{{ root }}/index.html" class="nav-item {% if section == 'testimonies' %}active{% endif %}">口供</a>
+      <a href="{{ root }}/documents.html" class="nav-item {% if section == 'documents' %}active{% endif %}">文件</a>
+      <a href="{{ root }}/lawyers.html" class="nav-item {% if section == 'lawyers' %}active{% endif %}">代表律師</a>
+      <a href="https://www.ic-wangfukcourtfire.gov.hk/chi/timetable.html" class="nav-item" target="_blank" rel="noopener">證人作供時間表</a>
+    </nav>
+
+    <!-- 主內容 -->
+    <div class="main">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</body>
+</html>

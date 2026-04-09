@@ -1,0 +1,47 @@
+{
+  "title": "文件資料庫",
+  "topics": [
+    {
+      "id": "topic-example",
+      "name": "消防相關",
+      "documents": [
+        {
+          "title": "消防裝置關閉通知書（SDN）",
+          "url": "https://www.hkfsd.gov.hk/chi/forms/fsi_shutdown.pdf",
+          "description": "",
+          "date": ""
+        },
+        {
+          "title": "Code of Practice 2022.09",
+          "url": "https://www.hkfsd.gov.hk/eng/source/safety/File2022.pdf",
+          "description": "最低限度之消防裝置及設備守則與裝置及設備之檢查、測試及保養守則",
+          "date": ""
+        },
+        {
+          "title": "最低限度之消防裝置及設備守則與裝置及設備之檢查、測試及保養守則 2022.09",
+          "url": "https://www.hkfsd.gov.hk/chi/source/safety/File2022C.pdf",
+          "description": "CODES OF PRACTICE FOR MINIMUM FIRE SERVICE INSTALLATIONS AND EQUIPMENT AND INSPECTION, TESTING AND MAINTENANCE OF INSTALLATIONS AND EQUIPMENT",
+          "date": ""
+        },
+        {
+          "title": "消防裝置及設備證書（F.S. 251）",
+          "url": "https://www.hkfsd.gov.hk/chi/source/circular/2025_05_chi_20250910_185641.pdf",
+          "description": "",
+          "date": ""
+        }
+      ]
+    },
+    {
+      "id": "topic-4ccad0de",
+      "name": "中華發展",
+      "documents": [
+        {
+          "title": "註冊消防裝置承辦商紀律委員會的命令",
+          "url": "",
+          "description": "因無交SDN被停牌三星期",
+          "date": "2022-01-15"
+        }
+      ]
+    }
+  ]
+}

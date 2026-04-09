@@ -1,0 +1,99 @@
+{% extends "admin/base.html" %}
+{% block title %}文件資料庫{% endblock %}
+{% block page_title %}📄 文件資料庫{% endblock %}
+{% block topbar_actions %}
+  <button class="btn btn-primary btn-sm" onclick="document.getElementById('new-topic-form').style.display='flex'">＋ 新增議題</button>
+{% endblock %}
+
+{% block content %}
+
+{# ── 新增議題表單（預設隱藏）── #}
+<div id="new-topic-form" class="card" style="display:none;align-items:flex-end;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+  <form method="post" action="/documents/topics/new" style="display:flex;gap:10px;align-items:flex-end;flex:1;flex-wrap:wrap">
+    <div style="flex:1;min-width:200px">
+      <label>新議題名稱</label>
+      <input type="text" name="name" placeholder="例：外牆維修工程" style="margin-bottom:0" autofocus>
+    </div>
+    <button type="submit" class="btn btn-primary">建立</button>
+    <button type="button" class="btn btn-gray" onclick="document.getElementById('new-topic-form').style.display='none'">取消</button>
+  </form>
+</div>
+
+{% if data.topics %}
+  {% for topic in data.topics %}
+  <div class="card" style="margin-bottom:20px">
+
+    {# 議題標題列 #}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <h3 style="margin:0">{{ topic.name }}</h3>
+        <button class="btn btn-gray btn-sm"
+          onclick="document.getElementById('rename-{{ topic.id }}').style.display='flex';this.style.display='none'">重命名</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/documents/topics/{{ topic.id }}/documents/new" class="btn btn-primary btn-sm">＋ 新增文件</a>
+        <form method="post" action="/documents/topics/{{ topic.id }}/delete"
+          onsubmit="return confirm('確定刪除「{{ topic.name }}」及其所有文件？')">
+          <button class="btn btn-red btn-sm">刪除議題</button>
+        </form>
+      </div>
+    </div>
+
+    {# 重命名表單（預設隱藏）#}
+    <form id="rename-{{ topic.id }}" method="post" action="/documents/topics/{{ topic.id }}/rename"
+      style="display:none;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <input type="text" name="name" value="{{ topic.name }}" style="flex:1;min-width:180px;margin-bottom:0">
+      <button type="submit" class="btn btn-primary btn-sm">確認</button>
+    </form>
+
+    {# 文件列表 #}
+    {% if topic.documents %}
+    <table>
+      <thead>
+        <tr>
+          <th>文件名稱</th>
+          <th>說明</th>
+          <th>日期</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doc in topic.documents %}
+        <tr>
+          <td>
+            {% if doc.url %}
+              <a href="{{ doc.url }}" target="_blank" style="font-weight:600">{{ doc.title }} ↗</a>
+            {% else %}
+              <span style="font-weight:600">{{ doc.title }}</span>
+            {% endif %}
+          </td>
+          <td style="font-size:13px;color:#6b7280">{{ doc.description or '—' }}</td>
+          <td style="font-size:13px;color:#9ca3af;white-space:nowrap">{{ doc.date or '—' }}</td>
+          <td style="white-space:nowrap">
+            <a href="/documents/topics/{{ topic.id }}/documents/{{ loop.index0 }}/edit"
+               class="btn btn-gray btn-sm">編輯</a>
+            <form method="post"
+              action="/documents/topics/{{ topic.id }}/documents/{{ loop.index0 }}/delete"
+              style="display:inline"
+              onsubmit="return confirm('確定刪除「{{ doc.title }}」？')">
+              <button class="btn btn-red btn-sm">刪除</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="color:#9ca3af;font-size:13px">此議題暫無文件。點擊「＋ 新增文件」加入。</p>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+
+{% else %}
+<div class="card" style="text-align:center;padding:48px;color:#9ca3af">
+  尚未建立任何議題。點擊右上角「＋ 新增議題」開始。
+</div>
+{% endif %}
+
+{% endblock %}

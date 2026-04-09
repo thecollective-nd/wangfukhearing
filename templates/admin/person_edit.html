@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
-{% block title %}{{ person.name }}{% endblock %}
-{% block page_title %}👤 {{ person.name }}{% endblock %}
+{% block title %}{{ person.name if person else '新增人物／機構' }}{% endblock %}
+{% block page_title %}👤 {{ person.name if person else '新增人物／機構' }}{% endblock %}
 {% block topbar_actions %}<a href="/people" class="btn btn-gray">← 返回列表</a>{% endblock %}
 
 {% block content %}
@@ -11,30 +11,30 @@
     <div class="card">
       <h3>基本資料</h3>
       <label>名稱</label>
-      <input type="text" name="name" value="{{ person.name }}">
+      <input type="text" name="name" value="{{ person.name if person else '' }}" placeholder="姓名或機構全稱">
 
       <label>類別</label>
       <select name="type">
-        <option value="individual" {% if person.type == 'individual' %}selected{% endif %}>個人</option>
-        <option value="organization" {% if person.type == 'organization' %}selected{% endif %}>機構／公司</option>
-        <option value="group" {% if person.type == 'group' %}selected{% endif %}>群體</option>
+        <option value="individual" {% if person and person.type == 'individual' %}selected{% endif %}>個人</option>
+        <option value="organization" {% if person and person.type == 'organization' %}selected{% endif %}>機構／公司</option>
+        <option value="group" {% if person and person.type == 'group' %}selected{% endif %}>群體</option>
       </select>
 
       <label>角色／身份</label>
-      <input type="text" name="role" value="{{ person.role }}" placeholder="例：外牆承辦商、物業管理公司...">
+      <input type="text" name="role" value="{{ person.role if person else '' }}" placeholder="例：外牆承辦商、物業管理公司...">
 
-      <label>代表律師</label>
-      <input type="text" name="represented_by" value="{{ person.represented_by }}" placeholder="例：許偉強資深大律師">
+      <label>所屬機構</label>
+      <input type="text" name="represented_by" value="{{ person.represented_by if person else '' }}" placeholder="例：中華發展有限公司">
 
       <label>詳細介紹</label>
       <p class="hint">介紹這個人物／機構在事件中的角色及背景（段落之間空一行）</p>
-      <textarea name="description" rows="8" placeholder="詳細說明...">{{ person.description }}</textarea>
+      <textarea name="description" rows="8" placeholder="詳細說明...">{{ person.description if person else '' }}</textarea>
 
       <div class="publish-toggle">
-        <input type="checkbox" name="published" id="published" {% if person.published %}checked{% endif %}>
+        <input type="checkbox" name="published" id="published" {% if person and person.published %}checked{% endif %}>
         <label for="published">標記為已發布</label>
       </div>
-      <button type="submit" class="btn btn-primary">儲存</button>
+      <button type="submit" class="btn btn-primary">{{ '儲存' if person else '建立' }}</button>
     </div>
   </div>
 
@@ -46,7 +46,7 @@
         {% for day in days %}
         <label>
           <input type="checkbox" name="day_ids" value="{{ day.id }}"
-            {% if day.id in person.day_ids %}checked{% endif %}>
+            {% if person and day.id in person.day_ids %}checked{% endif %}>
           第{{ day.day_number }}天（{{ day.date }}）
         </label>
         {% endfor %}
@@ -59,7 +59,7 @@
         {% for topic in topics %}
         <label>
           <input type="checkbox" name="topic_ids" value="{{ topic.id }}"
-            {% if topic.id in person.topic_ids %}checked{% endif %}>
+            {% if person and topic.id in person.topic_ids %}checked{% endif %}>
           {{ topic.name }}
         </label>
         {% endfor %}
@@ -68,8 +68,61 @@
   </div>
 </div>
 
-{% if person.updated_at %}
+{% if person and person.updated_at %}
   <p style="font-size:12px;color:#9ca3af;text-align:right">最後儲存：{{ person.updated_at }}</p>
 {% endif %}
 </form>
+
+{# ── 口供記錄（只在編輯既有人物時顯示）── #}
+{% if person %}
+<div class="card" style="margin-top:8px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <h3 style="margin:0">口供記錄</h3>
+    <a href="/testimonies/new?from_person={{ person.id }}&witness_id={{ person.id }}"
+       class="btn btn-primary btn-sm">＋ 新增口供</a>
+  </div>
+
+  {% if person_testimonies %}
+  <table>
+    <thead>
+      <tr>
+        <th>聽證日</th>
+        <th>作供方式</th>
+        <th>議題</th>
+        <th>發布</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in person_testimonies %}
+      <tr>
+        <td>
+          {% if t.day %}第{{ t.day.day_number }}天{% if t.day.date %}（{{ t.day.date }}）{% endif %}{% endif %}
+        </td>
+        <td style="font-size:13px;color:#6b7280">{{ t.testimony_type_label or '—' }}</td>
+        <td>
+          {% for tid in t.topic_ids %}
+            {% for topic in topics if topic.id == tid %}
+              <span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:1px 7px;border-radius:8px;margin-right:3px">{{ topic.name }}</span>
+            {% endfor %}
+          {% endfor %}
+        </td>
+        <td>
+          {% if t.published %}<span style="color:#15803d;font-size:13px">✓</span>
+          {% else %}<span style="color:#9ca3af;font-size:13px">草稿</span>{% endif %}
+        </td>
+        <td>
+          <a href="/testimonies/{{ t.id }}/edit?from_person={{ person.id }}"
+             class="btn btn-gray btn-sm">編輯</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:#9ca3af;font-size:13px">尚未有口供記錄。點擊右上角「＋ 新增口供」開始錄入。</p>
+  {% endif %}
+</div>
+{% endif %}
+
 {% endblock %}

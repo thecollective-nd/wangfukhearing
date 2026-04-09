@@ -1,0 +1,163 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ '編輯口供' if testimony else '新增口供' }}{% endblock %}
+{% block page_title %}{{ '編輯口供' if testimony else '新增口供' }}{% endblock %}
+{% block topbar_actions %}
+  {% if from_person %}
+    <a href="/people/{{ from_person }}/edit" class="btn btn-gray">← 返回人物頁</a>
+  {% else %}
+    <a href="/testimonies" class="btn btn-gray">← 返回列表</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+{# ── 主表單（基本資料 + 口供內容）── #}
+<form method="post">
+  {% if from_person %}
+  <input type="hidden" name="from_person" value="{{ from_person }}">
+  {% endif %}
+  <div class="grid-2">
+
+    <div class="card">
+      <h3>基本資料</h3>
+
+      <label>證人</label>
+      <select name="witness_id" required {% if from_person %}disabled{% endif %}>
+        <option value="">— 請選擇 —</option>
+        <optgroup label="人物">
+          {% for p in people if p.type == 'individual' %}
+          <option value="{{ p.id }}"
+            {% if (testimony and testimony.witness_id == p.id) or (not testimony and from_person == p.id) %}selected{% endif %}>
+            {{ p.name }}{% if p.role %} · {{ p.role }}{% endif %}
+          </option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="機構">
+          {% for p in people if p.type != 'individual' %}
+          <option value="{{ p.id }}"
+            {% if (testimony and testimony.witness_id == p.id) or (not testimony and from_person == p.id) %}selected{% endif %}>
+            {{ p.name }}{% if p.role %} · {{ p.role }}{% endif %}
+          </option>
+          {% endfor %}
+        </optgroup>
+      </select>
+      {% if from_person %}
+      {# disabled select 不會提交，需要隱藏欄位 #}
+      <input type="hidden" name="witness_id" value="{{ from_person }}">
+      {% endif %}
+
+      <label>聽證日</label>
+      <select name="day_id" required>
+        <option value="">— 請選擇 —</option>
+        {% for d in days %}
+        <option value="{{ d.id }}"
+          {% if testimony and testimony.day_id == d.id %}selected{% endif %}>
+          第{{ d.day_number }}天（{{ d.date }}）
+        </option>
+        {% endfor %}
+      </select>
+
+      <label>作供方式</label>
+      <select name="testimony_type">
+        <option value="">— 請選擇 —</option>
+        <option value="committee_statement_1" {% if testimony and testimony.testimony_type == 'committee_statement_1' %}selected{% endif %}>委員會證人陳述書／口供一</option>
+        <option value="committee_statement_2" {% if testimony and testimony.testimony_type == 'committee_statement_2' %}selected{% endif %}>委員會證人陳述書／口供二</option>
+        <option value="police_statement" {% if testimony and testimony.testimony_type == 'police_statement' %}selected{% endif %}>警方口供</option>
+        <option value="oral" {% if testimony and testimony.testimony_type == 'oral' %}selected{% endif %}>親身作供</option>
+      </select>
+
+      <label>相關議題</label>
+      <div class="checkbox-group">
+        {% for t in topics %}
+        <label>
+          <input type="checkbox" name="topic_ids" value="{{ t.id }}"
+            {% if testimony and t.id in testimony.topic_ids %}checked{% endif %}>
+          {{ t.name }}
+        </label>
+        {% endfor %}
+      </div>
+
+      <div style="margin-top:8px;margin-bottom:20px">
+        <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer">
+          <input type="checkbox" name="published"
+            {% if testimony and testimony.published %}checked{% endif %}>
+          已發布（公開顯示）
+        </label>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center">
+        <button type="submit" class="btn btn-primary">儲存</button>
+        {% if testimony %}
+          <span style="color:#d1d5db">|</span>
+          <span style="font-size:12px;color:#9ca3af">更新：{{ testimony.updated_at }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>口供內容</h3>
+      <textarea name="content" rows="22"
+        placeholder="在此輸入或貼上口供內容…&#10;&#10;空行會被視為新段落。">{{ testimony.content if testimony else '' }}</textarea>
+    </div>
+
+  </div>
+</form>
+
+{# ── 刪除（獨立表單，避免巢狀）── #}
+{% if testimony %}
+<form method="post" action="/testimonies/{{ testimony.id }}/delete"
+  style="margin-top:-12px;margin-bottom:24px">
+  {% if from_person %}<input type="hidden" name="from_person" value="{{ from_person }}">{% endif %}
+  <button class="btn btn-red btn-sm"
+    onclick="return confirm('確定永久刪除此口供記錄？')">刪除此記錄</button>
+</form>
+
+{# ── 提交證據 ── #}
+<div class="card">
+  <h3>提交證據</h3>
+
+  {% if testimony.evidence %}
+  <table style="margin-bottom:20px">
+    <thead>
+      <tr>
+        <th>文件名稱</th>
+        <th>說明</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in testimony.evidence %}
+      <tr>
+        <td style="font-weight:500">{{ item.title }}</td>
+        <td style="color:#6b7280;font-size:13px">{{ item.description or '—' }}</td>
+        <td>
+          <form method="post"
+            action="/testimonies/{{ testimony.id }}/evidence/delete/{{ loop.index0 }}">
+            <button class="btn btn-red btn-sm"
+              onclick="return confirm('刪除此證據項目？')">刪除</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:#9ca3af;font-size:13px;margin-bottom:18px">尚無證據記錄。</p>
+  {% endif %}
+
+  <form method="post" action="/testimonies/{{ testimony.id }}/evidence/add"
+    style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+    <div style="flex:1;min-width:180px">
+      <label>文件名稱</label>
+      <input type="text" name="title" placeholder="例：合約文件 P123" style="margin-bottom:0">
+    </div>
+    <div style="flex:2;min-width:220px">
+      <label>說明（選填）</label>
+      <input type="text" name="description" placeholder="補充說明" style="margin-bottom:0">
+    </div>
+    <button type="submit" class="btn btn-gray" style="flex-shrink:0">加入</button>
+  </form>
+</div>
+{% endif %}
+
+{% endblock %}

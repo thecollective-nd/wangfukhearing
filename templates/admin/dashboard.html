@@ -2,8 +2,11 @@
 {% block title %}儀表板{% endblock %}
 {% block page_title %}儀表板{% endblock %}
 {% block topbar_actions %}
-  <form method="post" action="/preview" style="display:inline">
-    <button class="btn btn-gray">🔄 生成預覽</button>
+  <form method="post" action="/preview" target="_blank" style="display:inline">
+    <button class="btn btn-gray">👁 本地預覽</button>
+  </form>
+  <form method="post" action="/preview-testimony" target="_blank" style="display:inline;margin-left:8px">
+    <button class="btn btn-gray">👁 口供資料庫</button>
   </form>
   <form method="post" action="/publish" style="display:inline;margin-left:8px">
     <button class="btn btn-green" onclick="return confirm('確認發布到 GitHub Pages？')">🚀 發布網站</button>
@@ -11,6 +14,7 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="grid-2" style="margin-bottom:20px">
   <div class="card" style="text-align:center">
     <div style="font-size:36px;font-weight:700;color:#3b82f6">{{ published_days }}/{{ days|length }}</div>

@@ -4,13 +4,13 @@
       "id": "person-1",
       "name": "置邦興業有限公司",
       "type": "organization",
-      "role": "涉事公司",
+      "role": "管理公司",
       "description": "",
-      "represented_by": "許偉強資深大律師、何卓衡大律師、楊志聰大律師",
+      "represented_by": "",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
-      "updated_at": ""
+      "updated_at": "2026-04-09 16:06"
     },
     {
       "id": "person-2",
@@ -18,7 +18,7 @@
       "type": "organization",
       "role": "業主立案法團",
       "description": "",
-      "represented_by": "李律仁資深大律師、柯愷欣大律師",
+      "represented_by": "",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
@@ -30,23 +30,23 @@
       "type": "organization",
       "role": "政府機構",
       "description": "",
-      "represented_by": "呂世杰資深大律師、阮文躍大律師",
+      "represented_by": "",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
-      "updated_at": ""
+      "updated_at": "2026-04-09 16:06"
     },
     {
       "id": "person-4",
       "name": "合安管理有限公司",
       "type": "organization",
-      "role": "管理公司",
+      "role": "新任管理公司",
       "description": "",
-      "represented_by": "文國灝大律師",
+      "represented_by": "",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
-      "updated_at": ""
+      "updated_at": "2026-04-09 16:06"
     },
     {
       "id": "person-5",
@@ -54,7 +54,7 @@
       "type": "organization",
       "role": "消防工程承辦商",
       "description": "",
-      "represented_by": "林樂夫大律師",
+      "represented_by": "",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
@@ -64,25 +64,25 @@
       "id": "person-6",
       "name": "梁秉基",
       "type": "individual",
-      "role": "",
+      "role": "董事",
       "description": "",
-      "represented_by": "陳熾龍大律師",
+      "represented_by": "中華發展工程有限公司",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
-      "updated_at": ""
+      "updated_at": "2026-04-09 16:08"
     },
     {
       "id": "person-7",
       "name": "黃俠然",
       "type": "individual",
-      "role": "",
+      "role": "董事",
       "description": "",
-      "represented_by": "鐘浩怡律師、何光偉律師",
+      "represented_by": "鴻毅建築師有限公司",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
-      "updated_at": ""
+      "updated_at": "2026-04-09 16:09"
     },
     {
       "id": "person-8",
@@ -90,7 +90,7 @@
       "type": "organization",
       "role": "政府機構",
       "description": "",
-      "represented_by": "李曉亮先生",
+      "represented_by": "",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
@@ -102,7 +102,7 @@
       "type": "group",
       "role": "受災居民",
       "description": "",
-      "represented_by": "譚俊傑大律師、李峰琦大律師",
+      "represented_by": "",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
@@ -110,15 +110,48 @@
     },
     {
       "id": "person-10",
-      "name": "政府",
-      "type": "organization",
-      "role": "政府",
+      "name": "唐慶麟",
+      "type": "individual",
+      "role": "水喉工",
+      "description": "2025年10月16及17日，同另一位全職水喉工唐小明、兼職蔡金龍，到宏福苑做年檢後執修工作。\r\n\r\n他稱當時由另一名工人關閉水掣。委員會展示唐慶麟的書面證供，唐慶麟隨即改口說是自己關閉。\r\n\r\n他指當日維修完成後，重開水掣時發現消防喉沒水出，檢查水缸發現一滴水都無、水缸內已鋪磚。他向物管公司置邦工程主任林文欣查詢，獲回覆稱因維修水缸所以沒水。其上司鍾傑文叫他問林文欣有沒有「掛牌」，林文欣稱有。",
+      "represented_by": "宏泰消防工程有限公司",
+      "day_ids": [
+        "day9"
+      ],
+      "topic_ids": [
+        "topic-3"
+      ],
+      "published": false,
+      "updated_at": "2026-04-09 17:06"
+    },
+    {
+      "id": "person-11",
+      "name": "鍾傑文",
+      "type": "individual",
+      "role": "董事",
       "description": "",
-      "represented_by": "孫靖乾資深大律師、卓元暢大律師、劉逸冲大律師",
+      "represented_by": "宏泰消防工程有限公司",
+      "day_ids": [
+        "day7",
+        "day9"
+      ],
+      "topic_ids": [
+        "topic-3"
+      ],
+      "published": false,
+      "updated_at": "2026-04-09 17:17"
+    },
+    {
+      "id": "person-12",
+      "name": "林文欣",
+      "type": "individual",
+      "role": "工程主任",
+      "description": "",
+      "represented_by": "置邦興業有限公司",
       "day_ids": [],
       "topic_ids": [],
       "published": false,
-      "updated_at": ""
+      "updated_at": "2026-04-09 18:56"
     }
   ]
 }
