@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鍾傑文 — 宏福苑獨立委員會聽證會</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif;
+      font-size: 15px;
+      color: #1a1a1a;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    /* ── 頂部欄 ── */
+    header {
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      text-decoration: none;
+    }
+    .site-name span { color: #64748b; font-weight: 400; margin-left: 8px; font-size: 12px; }
+    .header-tag {
+      background: #1e3a5f;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── 整體佈局 ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── 側欄 ── */
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e2e8f0;
+      padding: 24px 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+    }
+    .sidebar-section {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 18px;
+      margin: 18px 0 6px;
+    }
+    .sidebar-section:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 18px;
+      font-size: 14px;
+      color: #374151;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+    }
+    .nav-item:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      text-decoration: none;
+    }
+    .nav-item.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-left-color: #2563eb;
+      font-weight: 600;
+    }
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    /* ── 主內容 ── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px 36px;
+    }
+
+    /* 卡片 */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    /* 徽章 */
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #eff6ff;
+      color: #1d4ed8;
+      margin: 2px 3px 2px 0;
+    }
+    .tag-day { background: #f0fdf4; color: #15803d; }
+
+    /* 口供正文 */
+    .testimony-body p {
+      line-height: 1.9;
+      margin-bottom: 1em;
+      color: #374151;
+    }
+    .testimony-body p:last-child { margin-bottom: 0; }
+
+    /* 連結 */
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* 預覽標示 */
+    .preview-banner {
+      background: #fef9c3;
+      border-bottom: 2px solid #eab308;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #854d0e;
+    }
+
+    /* 手機：側欄收起 */
+    @media (max-width: 680px) {
+      .sidebar { display: none; }
+      .main { padding: 20px 16px; }
+    }
+
+    
+.person-header {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.person-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.person-header .meta {
+  font-size: 14px;
+  color: #6b7280;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.person-header .meta .sep { color: #d1d5db; }
+.person-header .desc {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.8;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 14px;
+}
+
+.testimony-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  scroll-margin-top: 24px;
+}
+.testimony-section .section-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.testimony-section .section-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.testimony-body p {
+  line-height: 1.9;
+  margin-bottom: 1em;
+  color: #374151;
+}
+.testimony-body p:last-child { margin-bottom: 0; }
+
+.evidence-list {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+.evidence-list h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.evidence-item {
+  font-size: 13px;
+  color: #374151;
+  padding: 4px 0;
+}
+.evidence-item .ev-title { font-weight: 600; }
+.evidence-item .ev-desc { color: #6b7280; margin-left: 6px; }
+
+.back-link {
+  display: inline-block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+.back-link:hover { color: #2563eb; }
+
+  </style>
+  
+</head>
+<body>
+  
+
+  <header>
+    <a href="../index.html" class="site-name">
+      宏福苑獨立委員會聽證會
+      <span>聽證會資料庫</span>
+    </a>
+    <span class="header-tag">資料搜集用途</span>
+  </header>
+
+  <div class="layout">
+    <!-- 側欄 -->
+    <nav class="sidebar">
+      <a href="../index.html" class="nav-item active">口供</a>
+      <a href="../documents.html" class="nav-item ">文件</a>
+      <a href="../lawyers.html" class="nav-item ">代表律師</a>
+      <a href="https://www.ic-wangfukcourtfire.gov.hk/chi/timetable.html" class="nav-item" target="_blank" rel="noopener">證人作供時間表</a>
+    </nav>
+
+    <!-- 主內容 -->
+    <div class="main">
+      
+<div class="container">
+
+  
+  <div class="person-header">
+    <h1>鍾傑文</h1>
+    <div class="meta">
+      <span>董事</span>
+      <span class="sep">·</span>
+      <span>宏泰消防工程有限公司</span>
+    </div>
+    
+  </div>
+
+  
+  
+  <div class="testimony-section" id="testimony-testimony-3">
+    <div class="section-header">
+      <h2>
+        
+      </h2>
+      
+      
+        <span class="tag" style="background:#f5f3ff;color:#6d28d9">委員會證人陳述書／口供一</span>
+      
+      
+    </div>
+
+    <div class="testimony-body">
+      <p>==<br>第一份證人供詞<br>==<br>11. 202511126 1328，林先生因檢宏泰師傅完工，致電本人表示要盡快發出fs251，因消防處向他追問。電話總本人表示連接系統部分不能出證書（包括警鐘gum手、消防栓及消防喉系統），因為宏泰工人於檢查時發現消防水缸沒有儲水，且供水及消防泵電源亦已被關閉。通話過程中，林先生知悉消防泵已被大維修師傅關掉。本人亦要求他提供掛牌紙（即消防裝置關閉通知書），但他未能即時提供，並表示會稍後交予本人。</p>
+    </div>
+
+    
+  </div>
+  
+  <div class="testimony-section" id="testimony-testimony-4">
+    <div class="section-header">
+      <h2>
+        
+      </h2>
+      
+      
+        <span class="tag" style="background:#f5f3ff;color:#6d28d9">委員會證人陳述書／口供二</span>
+      
+      
+        <span class="tag">消防警報</span>
+      
+    </div>
+
+    <div class="testimony-body">
+      <p>==<br>第二份證人供詞<br>==<br>林在電話中說：「鐘生鐘生，你有無宏泰或者平日時掛牌個啲form啊，我想睇下」，我回應「吓，無wor，我訓緊覺wor，咩事？」<br>我說，「我地無掛過牌wor」，我反問，「你地唔係掛左牌咩？點解依家反而問我嘅？！」。佢表示文件係管理處，而家（管理處）封左入唔到去，佢哋想了解多些，問我可吾可以send啲我地掛過牌嘅比佢睇下，第二啲都得，我表示無係手。<br>我說掛牌紙係standard form，係消防處網站找到，你上網search...<br><br>8. 他表示很擔心，今次火災好大獲，並問係咪大維修消防公司掛左牌，就我同佢（林文欣）都無責任。<br><br>我記得我講過，我只是做年檢同維修，大維修嘅消防工程我無參與過，亦不清楚，我怪責佢：「點解明知掛左牌，都唔事先同我地講聲，只係識一直催我們開工，到我地發現有問題，先講。」<br><br>我續說：「我地做年檢時都有mark到有部分gum手損壞和仲要有啲鐘係細聲，點可能會無試啊？！（當晚 傳媒風向是指年檢無認真試）每套喉鹿我地都要貼大餅（一張圓形的檢查label在喉鹿的中間位置），gum手就係隔...」</p>
+    </div>
+
+    
+  </div>
+  
+
+  
+
+</div>
+
+    </div>
+  </div>
+</body>
+</html>
